@@ -64,7 +64,7 @@ Players will also have the ability to play solo against the computer if they do 
 [Link to slide](https://tuprd-my.sharepoint.com/:p:/g/personal/tuk78874_temple_edu/EWLyduh_F0pLkRBBWUFylA4BhgY-E80-k729pD_YhWAOSA?e=6Frigg)
 
 ## How to Run
-Run the BattleShip.jar file to play BattleShip!
+Download the BattleShip.jar file from the releases tab. Once downloaded, the game can be played!
 
 Add more instructions here on IDE setup
 
