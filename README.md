@@ -7,7 +7,6 @@ A simple battleship game written in Java with a Graphical User Interface and opt
 * [Features](#features)
 * [Status](#status)
 * [Contributing](#contributing)
-* [Vision Statement](#vision statement)
 
 ## Technologies
 
