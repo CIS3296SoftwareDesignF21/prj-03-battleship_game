@@ -83,5 +83,8 @@ to be average and can navigate the BattleShip UI very easily. She likes the simp
 and ability to play with her friends over the internet. However, since the game uses networking, 
 she only recommends this game to her friends that she thinks are technologically competent. 
 
+![DNPersona](https://user-images.githubusercontent.com/47299145/140327921-fe76cf8f-c3c0-4d65-94eb-8c77ea530228.png)
+
+
 
 
