@@ -11,9 +11,12 @@ import com.intellij.uiDesigner.core.GridLayoutManager;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
+import javax.swing.plaf.FontUIResource;
+import javax.swing.text.StyleContext;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Locale;
 
 
 public class GameBoard {
@@ -63,14 +66,11 @@ public class GameBoard {
      * Then place them on another (disabled) grid layout of buttons
      */
     private void setShipOnBoard() {
-
         for (Ship shipToPlace : ShipPlanner.board.field.values()) {
-
             int[] h_c = shipToPlace.getHeadCoordinates();
             int length = shipToPlace.getLength();
-
+            // draw the ship on the board
             if (shipToPlace.isVertical()) {
-
                 for (int i = 0; i < length; i++) {
                     playerPositions[h_c[0]][h_c[1] + i].setBackground(Color.BLUE);
                     playerPositions[h_c[0]][h_c[1] + i].setEnabled(true);
@@ -165,7 +165,7 @@ public class GameBoard {
 
     public void sendUserData() {
         try {
-            connection.send(new PlayerData(Player.getName(), Player.getAvatar()));
+            connection.send(new PlayerData(Player.getName()));
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -174,8 +174,8 @@ public class GameBoard {
     // TODO: refactoring
     private void handleData(Object data) {
         if (data instanceof String) {
+            //System.out.println((String) data);
             messages.append(data.toString() + "\n");
-
         } else if (data instanceof PlayerData) {
             if (!isUserDataSet) {
                 PlayerData enemy = (PlayerData) data;
@@ -287,7 +287,10 @@ public class GameBoard {
                 resultName = currentFont.getName();
             }
         }
-        return new Font(resultName, style >= 0 ? style : currentFont.getStyle(), size >= 0 ? size : currentFont.getSize());
+        Font font = new Font(resultName, style >= 0 ? style : currentFont.getStyle(), size >= 0 ? size : currentFont.getSize());
+        boolean isMac = System.getProperty("os.name", "").toLowerCase(Locale.ENGLISH).startsWith("mac");
+        Font fontWithFallback = isMac ? new Font(font.getFamily(), font.getStyle(), font.getSize()) : new StyleContext().getFont(font.getFamily(), font.getStyle(), font.getSize());
+        return fontWithFallback instanceof FontUIResource ? fontWithFallback : new FontUIResource(fontWithFallback);
     }
 
     /**
@@ -304,18 +307,14 @@ public class GameBoard {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-
+            // send the chat message
             Object source = e.getSource();
-
             if (source == input) {
-
-                System.out.println(input.getText());
+                //System.out.println(input.getText());
                 String message = Player.getName() + ": ";
                 message += input.getText();
                 input.setText("");
-
                 messages.append(message + "\n");
-
                 try {
                     connection.send(message);
                 } catch (Exception ex) {
