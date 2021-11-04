@@ -72,6 +72,8 @@ Add more instructions here on IDE setup
 Add vision statement
 
 ## Personas 
+
+_John David-Glatts_
 Lauren is a 31 year old nurse who works the night shift at the Temple
 University Hospital in Philadelphia Pa. She graduated with a nursing degree from 
 La Salle University and enjoys playing videogames in her free time. Often times, when
@@ -82,6 +84,12 @@ playing solo because of her hectic work schedule. She finds hers technical abili
 to be average and can navigate the BattleShip UI very easily. She likes the simple controls
 and ability to play with her friends over the internet. However, since the game uses networking, 
 she only recommends this game to her friends that she thinks are technologically competent. 
+
+_Juan-Carlo Villamor Mercado_
+Tanaka is a 21 year old gaming enthusiast and gamer who works at a PNC Bank's IT department. 
+He enjoys playing video games regularly but is unable to play the games he plays at home due to his job. 
+Since he enjoys multiplayer games online, he decides he can play the Battleship game with his coworkers locally and if need be online with others.
+He is able to navigate the Battleship UI very easily because of his technological background.
 
 
 
