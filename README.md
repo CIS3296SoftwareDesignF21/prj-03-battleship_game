@@ -93,5 +93,24 @@ He enjoys playing video games regularly but is unable to play the games he plays
 Since he enjoys multiplayer games online, he decides he can play the Battleship game with his coworkers locally and if need be online with others.
 He is able to navigate the Battleship UI very easily because of his technological background.
 
+## John Crane
 
+Amanda, age 33, is an elementary school teacher at Jarrettown Elementary School
+in Upper Dublin, PA. She graduated from Millersville University. She’s been teaching fifth
+grade for just over 3 years now and she absolutely loves her job and her students. 
+She also has a two year old daughter and a five year old son, so she's no stranger
+to working with little kids. In fact, she's so good with her students that she’s
+essentially solidified her status as the cool teacher. 
+
+During the rainy autumn months, recess for the students is often held indoors.
+While Amanda likes to watch her students play amongst themselves in the classroom,
+it's clear that some of them get pretty fidgety during indoor recess since
+there are only a few board games they can play with. Amanda is thinking about
+introducing a virtual BattlesShip game to her students since
+they could play it on their school issued laptops. She's as confident with
+technology as the typical millenial so she should be able to get the kids setup
+with the game fairly easily. Some of the students play computer games at home as well, so Amanda
+thinks this could be a great way to keep the kids occupied. Ideally for her, the
+game would be easy enough for the students to play on their own so she can
+enjoy a break while the kids have indoor recess.
 
