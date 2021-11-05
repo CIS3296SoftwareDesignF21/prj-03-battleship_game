@@ -139,6 +139,6 @@ enjoy a break while the kids have indoor recess.
 
 
 ## Week 1 Tasks
-[Click Here](https://github.com/CIS3296SoftwareDesignF21/prj-03-battleship_game/blob/network-fix/Week1.md)
+[Click Here](https://github.com/CIS3296SoftwareDesignF21/prj-03-battleship_game/blob/main/Week1.md)
 
 
