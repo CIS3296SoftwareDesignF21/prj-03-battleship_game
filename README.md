@@ -137,3 +137,8 @@ enjoy a break while the kids have indoor recess.
 ## Dat Nguyen
 ![DNPersona](https://user-images.githubusercontent.com/47299145/140327921-fe76cf8f-c3c0-4d65-94eb-8c77ea530228.png)
 
+
+## Week 1 Tasks
+[Click Here](https://github.com/CIS3296SoftwareDesignF21/prj-03-battleship_game/blob/network-fix/Week1.md)
+
+
