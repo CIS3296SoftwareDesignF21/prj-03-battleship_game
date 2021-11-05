@@ -134,6 +134,6 @@ thinks this could be a great way to keep the kids occupied. Ideally for her, the
 game would be easy enough for the students to play on their own so she can
 enjoy a break while the kids have indoor recess.
 
-## Elon Fisher
+## Dat Nguyen
 ![DNPersona](https://user-images.githubusercontent.com/47299145/140327921-fe76cf8f-c3c0-4d65-94eb-8c77ea530228.png)
 
