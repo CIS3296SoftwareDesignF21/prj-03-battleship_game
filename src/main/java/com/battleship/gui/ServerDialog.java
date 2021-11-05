@@ -11,6 +11,7 @@ import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.net.InetAddress;
 
 
 public class ServerDialog extends JDialog {
@@ -48,7 +49,7 @@ public class ServerDialog extends JDialog {
                 KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
 
         try {
-            publicIP.setText(IpChecker.getIp());
+            publicIP.setText(InetAddress.getLocalHost().getHostAddress());
         } catch (Exception e) {
             e.printStackTrace();
             JOptionPane.showMessageDialog(this,
