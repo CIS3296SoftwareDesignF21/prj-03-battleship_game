@@ -78,7 +78,7 @@ successfully. From Intellij, hit File->Settings->Editor->GUI Designer. Once this
 is opened up, click the button that says generate GUI into java source code. This will allow you to develop, test, and run the
 BattleShip program from your IDE. 
 
-### *Local Network Only*
+### Play over the Internet
 The game works with no issues when using it on a local network.
 More testing and development is to come with using the public internet to run the game.
 

@@ -32,10 +32,8 @@ public class ServerDialog extends JDialog {
         setContentPane(contentPane);
         setModal(true);
         getRootPane().setDefaultButton(buttonOK);
-
         buttonOK.addActionListener(e -> onOK());
         buttonCancel.addActionListener(e -> onCancel());
-
         // call onCancel() when cross is clicked
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
         addWindowListener(new WindowAdapter() {
@@ -43,13 +41,11 @@ public class ServerDialog extends JDialog {
                 onCancel();
             }
         });
-
         // call onCancel() on ESCAPE
         contentPane.registerKeyboardAction(e -> onCancel(),
                 KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
-
         try {
-            publicIP.setText(InetAddress.getLocalHost().getHostAddress());
+            publicIP.setText(IpChecker.getIp());
         } catch (Exception e) {
             e.printStackTrace();
             JOptionPane.showMessageDialog(this,
@@ -57,14 +53,12 @@ public class ServerDialog extends JDialog {
                     "Connection Error",
                     JOptionPane.ERROR_MESSAGE);
         }
-
         pack();
         setLocationRelativeTo(null);
         setVisible(true);
     }
 
     private void onOK() {
-
         try {
             int port = Integer.parseInt(portTextField.getText());
             if (AddressChecker.isValidPort(port)) {
@@ -155,4 +149,5 @@ public class ServerDialog extends JDialog {
     public JComponent $$$getRootComponent$$$() {
         return contentPane;
     }
+
 }
