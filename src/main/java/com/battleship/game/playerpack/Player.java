@@ -7,6 +7,7 @@ public class Player {
     private static String name;
     private static boolean host = false;
     private static ImageIcon avatar;
+    private static int score;
 
     /**
      * @return the name of the Player
@@ -45,4 +46,10 @@ public class Player {
     public static void setAvatar(String path) {
         avatar = new ImageIcon(path);
     }
+
+    public static int getScore() {return score; }
+
+    public static void setScore(int newScore) {score = newScore; }
+
+
 }
