@@ -1,5 +1,7 @@
 package com.battleship.networking;
 
+import com.battleship.utils.IpChecker;
+
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -79,7 +81,11 @@ public abstract class NetworkConnection {
             ServerSocket server = isServer() ? new ServerSocket(getPort()) : null;
             Socket socket = isServer() ? server.accept() : new Socket(getIP(), getPort());
             if (isServer()) {
-                System.out.println("My IP is " + InetAddress.getLocalHost().getHostAddress());
+                try {
+                    System.out.println("My IP is " + IpChecker.getIp());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
             this.socket = socket;
             this.out =  new ObjectOutputStream(socket.getOutputStream());

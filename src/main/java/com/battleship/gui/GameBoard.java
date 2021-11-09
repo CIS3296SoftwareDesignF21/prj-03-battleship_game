@@ -43,6 +43,9 @@ public class GameBoard {
     private JRadioButton btnPowerUpLineVert;
     private JRadioButton btnPowerUpLineHorizontal;
     private JRadioButton btnPowerUpMaxHitDamage;
+    private JLabel whosTurnLabel;
+    private JButton replayGameButton;
+    private String enemyName = "Enemy Player";
     private boolean isUserDataSet = false;
     private boolean isUserTurn = Player.isHost();
 
@@ -60,11 +63,13 @@ public class GameBoard {
         this.setShipOnBoard();
         this.setEnemyButtons();
         this.setUserElements();
+        this.setTurnLabel();
         frame.add(mainPanel, BorderLayout.CENTER);
         frame.setSize(1000, 800); //TODO: set a good size for the game.
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
+        replayGameButton.setVisible(false);
     }
 
     /**
@@ -133,6 +138,11 @@ public class GameBoard {
         playerFieldLabel.setIcon(Player.getAvatar());
     }
 
+    private void setTurnLabel() {
+        whosTurnLabel.setText(isUserTurn ? "Your Turn" : enemyName + "'s Turn");
+        whosTurnLabel.setForeground(isUserTurn ? Color.GREEN : Color.RED);
+    }
+
     /**
      * Called if the Player is the server
      *
@@ -177,6 +187,7 @@ public class GameBoard {
     }
 
     private void handleData(Object data) {
+        setTurnLabel();
         if (data instanceof String) {
             // got a chat message
             messages.append(data.toString() + "\n");
@@ -192,6 +203,7 @@ public class GameBoard {
     private void setPlayerData(Object data) {
         if (!isUserDataSet) {
             PlayerData enemy = (PlayerData) data;
+            if (enemy.getName().length() > 0) enemyName = enemy.getName();
             enemyFieldLabel.setText(enemy.getName() + "'s field");
             enemyFieldLabel.setIcon(enemy.getAvatar());
             sendUserData();
@@ -207,11 +219,14 @@ public class GameBoard {
         } else if (posToAttack[0] == SHIP_HIT) { // The enemy sends back the int array with a 1 in first position to signal that he has been hit
             enemyPositions[posToAttack[1]][posToAttack[2]].setBackground(Color.RED);
             isUserTurn = true;
+            setTurnLabel();
         } else if (posToAttack[0] == GAME_WON) {
             JOptionPane.showMessageDialog(frame,
                     "You won!",
                     "Congratulations",
                     JOptionPane.INFORMATION_MESSAGE);
+            replayGameButton.setEnabled(true);
+            replayGameButton.setVisible(true);
         } else {
             // check if this player got hit
             if (playerPositions[posToAttack[1]][posToAttack[2]].isEnabled()) {
@@ -219,6 +234,7 @@ public class GameBoard {
             } else {
                 // not hit, it's a new players turn now
                 isUserTurn = true;
+                setTurnLabel();
             }
         }
     }
@@ -255,6 +271,8 @@ public class GameBoard {
                         "You lost!",
                         "Bad news",
                         JOptionPane.INFORMATION_MESSAGE);
+                replayGameButton.setEnabled(true);
+                replayGameButton.setVisible(true);
             } else {
                 connection.send(new int[]{SHIP_HIT, posToAttack[1], posToAttack[2], posToAttack[3]});
             }
@@ -312,6 +330,7 @@ public class GameBoard {
                 break;
         }
         isUserTurn = true;
+        setTurnLabel();
     }
 
     private void handleMaxDamagePlayerBoard(int row, int col) {
@@ -370,14 +389,14 @@ public class GameBoard {
     private void $$$setupUI$$$() {
         createUIComponents();
         mainPanel = new JPanel();
-        mainPanel.setLayout(new GridLayoutManager(6, 4, new Insets(0, 0, 0, 0), -1, -1));
+        mainPanel.setLayout(new GridLayoutManager(7, 5, new Insets(0, 0, 0, 0), -1, -1));
         mainPanel.setForeground(new Color(-4473925));
         mainPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10), null, TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, null, null));
-        mainPanel.add(gameBoard1, new GridConstraints(1, 0, 4, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, new Dimension(400, 400), new Dimension(400, 400), new Dimension(400, 400), 0, false));
+        mainPanel.add(gameBoard1, new GridConstraints(2, 0, 4, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, new Dimension(400, 400), new Dimension(400, 400), new Dimension(400, 400), 0, false));
         gameBoard1.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(10, 10, 10, 20), null, TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, null, null));
         chatPanel = new JPanel();
         chatPanel.setLayout(new GridLayoutManager(2, 1, new Insets(0, 0, 0, 0), -1, -1));
-        mainPanel.add(chatPanel, new GridConstraints(5, 0, 1, 4, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, new Dimension(250, 250), new Dimension(250, 500), null, 0, false));
+        mainPanel.add(chatPanel, new GridConstraints(6, 0, 1, 5, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, new Dimension(250, 250), new Dimension(250, 500), null, 0, false));
         chatPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10), "Chat", TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, null, null));
         scrollPane = new JScrollPane();
         chatPanel.add(scrollPane, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
@@ -390,23 +409,34 @@ public class GameBoard {
         Font inputFont = this.$$$getFont$$$("Roboto Light", -1, -1, input.getFont());
         if (inputFont != null) input.setFont(inputFont);
         chatPanel.add(input, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
-        mainPanel.add(gameBoard2, new GridConstraints(1, 1, 4, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, new Dimension(400, 400), new Dimension(400, 400), new Dimension(400, 400), 0, false));
+        gameBoard2.setForeground(new Color(-14911728));
+        mainPanel.add(gameBoard2, new GridConstraints(2, 2, 4, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, new Dimension(400, 400), new Dimension(400, 400), new Dimension(400, 400), 0, false));
         gameBoard2.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(10, 10, 10, 20), null, TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, null, null));
         playerFieldLabel = new JLabel();
         playerFieldLabel.setText("Your Field");
-        mainPanel.add(playerFieldLabel, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        mainPanel.add(playerFieldLabel, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         enemyFieldLabel = new JLabel();
         enemyFieldLabel.setText("Enemy field");
-        mainPanel.add(enemyFieldLabel, new GridConstraints(0, 1, 1, 2, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        mainPanel.add(enemyFieldLabel, new GridConstraints(1, 2, 1, 2, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         btnPowerUpLineVert = new JRadioButton();
         btnPowerUpLineVert.setText("Fire Whole Line - Vertical");
-        mainPanel.add(btnPowerUpLineVert, new GridConstraints(1, 2, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        mainPanel.add(btnPowerUpLineVert, new GridConstraints(2, 3, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         btnPowerUpLineHorizontal = new JRadioButton();
         btnPowerUpLineHorizontal.setText("Fire Whole Line - Horizontal");
-        mainPanel.add(btnPowerUpLineHorizontal, new GridConstraints(2, 2, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        mainPanel.add(btnPowerUpLineHorizontal, new GridConstraints(3, 3, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         btnPowerUpMaxHitDamage = new JRadioButton();
         btnPowerUpMaxHitDamage.setText("Max Hit Damage");
-        mainPanel.add(btnPowerUpMaxHitDamage, new GridConstraints(3, 2, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        mainPanel.add(btnPowerUpMaxHitDamage, new GridConstraints(4, 3, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        whosTurnLabel = new JLabel();
+        whosTurnLabel.setBackground(new Color(-14911728));
+        Font whosTurnLabelFont = this.$$$getFont$$$(null, -1, 18, whosTurnLabel.getFont());
+        if (whosTurnLabelFont != null) whosTurnLabel.setFont(whosTurnLabelFont);
+        whosTurnLabel.setText("Who's turn?");
+        mainPanel.add(whosTurnLabel, new GridConstraints(0, 3, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        replayGameButton = new JButton();
+        replayGameButton.setEnabled(false);
+        replayGameButton.setText("Replay Game?");
+        mainPanel.add(replayGameButton, new GridConstraints(3, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
     }
 
     /**
@@ -486,6 +516,7 @@ public class GameBoard {
                         }
                         enemyPositions[i][j].setEnabled(false);
                         isUserTurn = false;
+                        setTurnLabel();
                     }
                 }
             }
