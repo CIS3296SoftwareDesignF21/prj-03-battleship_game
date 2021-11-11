@@ -30,7 +30,8 @@ public class GameBoard {
     private JTextField input;
     private final JButton[][] enemyPositions = new JButton[10][10];
     private final int PLAYING = 0;
-    private int currentScore = 0;
+    private int yourCurrentScore = 0;
+    private int enemyCurrentScore = 0;
     private NetworkConnection connection;
     private final ButtonHandler buttonHandler = new ButtonHandler();
     private final PowerUpHandler powerUpHandler = new PowerUpHandler();
@@ -80,6 +81,7 @@ public class GameBoard {
      * Then place them on another (disabled) grid layout of buttons
      */
     private void setShipOnBoard() {
+        setScoreLabel();
         for (Ship shipToPlace : ShipPlanner.board.field.values()) {
             int[] h_c = shipToPlace.getHeadCoordinates();
             int length = shipToPlace.getLength();
@@ -147,7 +149,8 @@ public class GameBoard {
     }
 
     private void setScoreLabel() {
-        yourScore.setText("Score: " + currentScore);
+        yourScore.setText("Your Score: " + yourCurrentScore);
+        enemyScore.setText("Enemy Score: " + enemyCurrentScore);
     }
 
 
@@ -221,11 +224,11 @@ public class GameBoard {
 
     private void handleGameData(int[] posToAttack) {
         if (posToAttack[0] == SHIP_HIT && posToAttack[3] != 0) {
-            // the other play got hit, so update their board
+            // the other player got hit, so update their board
             updateHitWithPowerUp(posToAttack);
             disableChosenPowerUp(posToAttack[3]);
         } else if (posToAttack[0] == SHIP_HIT) { // The enemy sends back the int array with a 1 in first position to signal that he has been hit
-            currentScore++;
+            yourCurrentScore++;
             enemyPositions[posToAttack[1]][posToAttack[2]].setBackground(Color.RED);
             isUserTurn = true;
             setScoreLabel();
@@ -240,7 +243,9 @@ public class GameBoard {
         } else {
             // check if this player got hit
             if (playerPositions[posToAttack[1]][posToAttack[2]].isEnabled()) {
+                enemyCurrentScore++;
                 updatePlayerBoard(posToAttack);
+                setScoreLabel();
             } else {
                 // not hit, it's a new players turn now
                 isUserTurn = true;
