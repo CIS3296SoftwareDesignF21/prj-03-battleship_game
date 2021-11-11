@@ -114,6 +114,9 @@ thinks this could be a great way to keep the kids occupied. Ideally for her, the
 game would be easy enough for the students to play on their own so she can
 enjoy a break while the kids have indoor recess.
 
+## Felix Chen
+Raymond Scott is a 34 years old port crane operator who works at the port of Philadelphia. Ever since he was a kid, he enjoyed playing all kind of board gam with his family, especially battleship. Now he is a enthusiastic gamer, and he still very much enjoys battleship. During his break he will play the battleship game with his co-op friend. He can also play the battleship game over the weekend with friends over the internet. He thinks the battleship UI is very clean and simple, and easy to navigate.
+
 ## Elon Fisher
 ![DNPersona](https://user-images.githubusercontent.com/47299145/140327921-fe76cf8f-c3c0-4d65-94eb-8c77ea530228.png)
 
