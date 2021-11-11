@@ -232,20 +232,25 @@ public class ShipPlanner implements ActionListener {
                                     board.addShip(new Ship(i, j, i, j + shipLen), (String) comboBoxShipSelector.getSelectedItem());
                                     comboBoxShipSelector.removeItem(comboBoxShipSelector.getSelectedItem());
                                 }
-                            } else {
-                                if (i + shipLen <= 10 && isValidPosition(i, j, i + shipLen - 1, j)) {
+                            }
+
+                            else if (i + shipLen <= 10 && isValidPosition(i, j, i + shipLen - 1, j)) {
                                     for (int l = i; l < i + shipLen; l++) {
                                         this.disableSurrounding(l, j);
                                         positions[l][j].setBackground(Color.BLUE);
                                     }
                                     board.addShip(new Ship(i, j, i + shipLen, j), (String) comboBoxShipSelector.getSelectedItem());
                                     comboBoxShipSelector.removeItem(comboBoxShipSelector.getSelectedItem());
-                                }
                             }
 
-                            if (comboBoxItemCount == 1) {
-                                buttonOk.setEnabled(true);
+                            //Added to implement random ship placement button.
+                            //This will allow the ships to be place randomly
+                            else if (i + shipLen <= 10 && isValidPosition()){
+
                             }
+
+                            if (comboBoxItemCount == 1) {buttonOk.setEnabled(true);}
+
                         }
                     }
                 }
