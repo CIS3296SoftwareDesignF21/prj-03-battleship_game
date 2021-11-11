@@ -8,12 +8,20 @@ import com.intellij.uiDesigner.core.Spacer;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
+import javax.swing.plaf.FontUIResource;
+import javax.swing.text.StyleContext;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.util.Locale;
 import java.util.Objects;
+
+
+/*
+    Add a test Class to auto-gen the board and what not
+ */
 
 public class ShipPlanner implements ActionListener {
 
@@ -29,29 +37,23 @@ public class ShipPlanner implements ActionListener {
     private JTextArea messages;
     private final JButton[][] positions = new JButton[10][10];
     private final ButtonHandler buttonHandler = new ButtonHandler();
-
     public static final Board board = new Board();
-
     private final boolean isServer;
     private final int port;
     private final String ip;
 
     public ShipPlanner(boolean isServer, int port, String ip) {
-
         frame = new JFrame("Place your ships");
-
         $$$setupUI$$$();
         buttonOk.addActionListener(this);
         buttonReset.addActionListener(this);
         this.setButtons();
-
         frame.add(panel, BorderLayout.CENTER);
         frame.setContentPane(panel);
         frame.setSize(1000, 500); //TODO: set a good size for the game.
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
-
         this.isServer = isServer;
         this.port = port;
         this.ip = ip;
@@ -69,13 +71,10 @@ public class ShipPlanner implements ActionListener {
      * This fills the panel with buttons
      */
     private void setButtons() {
-
         for (int i = 0; i < 10; i++) {
             for (int j = 0; j < 10; j++) {
                 positions[i][j] = new JButton();
-
                 positions[i][j].setBackground(Color.LIGHT_GRAY);
-
                 gridPanel.add(positions[i][j]);
                 positions[i][j].addMouseListener(buttonHandler);
             }
@@ -98,7 +97,6 @@ public class ShipPlanner implements ActionListener {
         }
         // To reset the initial config of the field. This deletes all the previously added ships
         else if (source == buttonReset) {
-
             board.field.clear(); // resets hashmap
             resetPlanner();
         }
@@ -193,7 +191,10 @@ public class ShipPlanner implements ActionListener {
                 resultName = currentFont.getName();
             }
         }
-        return new Font(resultName, style >= 0 ? style : currentFont.getStyle(), size >= 0 ? size : currentFont.getSize());
+        Font font = new Font(resultName, style >= 0 ? style : currentFont.getStyle(), size >= 0 ? size : currentFont.getSize());
+        boolean isMac = System.getProperty("os.name", "").toLowerCase(Locale.ENGLISH).startsWith("mac");
+        Font fontWithFallback = isMac ? new Font(font.getFamily(), font.getStyle(), font.getSize()) : new StyleContext().getFont(font.getFamily(), font.getStyle(), font.getSize());
+        return fontWithFallback instanceof FontUIResource ? fontWithFallback : new FontUIResource(fontWithFallback);
     }
 
     /**
@@ -204,22 +205,18 @@ public class ShipPlanner implements ActionListener {
     }
 
     private class ButtonHandler implements MouseListener {
-
         @Override
         public void mouseClicked(MouseEvent e) {
             Object source = e.getSource();
-
             // TODO: refactor
+            // this can be a way better alg.
             for (int i = 0; i < 10; i++) {
                 for (int j = 0; j < 10; j++) {
+                    // check where the user clicked and add the ship
                     if (source == positions[i][j]) {
-
                         int comboBoxItemCount = comboBoxShipSelector.getItemCount();
-
                         if (comboBoxItemCount > 0) {
-
                             int shipLen = Integer.parseInt(((String) Objects.requireNonNull(comboBoxShipSelector.getSelectedItem())).substring(0, 1));
-
                             if (SwingUtilities.isRightMouseButton(e)) {
                                 if (j + shipLen <= 10 && isValidPosition(i, j, i, j + shipLen - 1)) {
                                     for (int l = j; l < j + shipLen; l++) {

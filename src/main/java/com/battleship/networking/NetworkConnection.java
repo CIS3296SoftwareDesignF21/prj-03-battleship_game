@@ -1,5 +1,6 @@
 package com.battleship.networking;
 
+import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
@@ -26,7 +27,6 @@ public abstract class NetworkConnection {
      * Starts the connection
      */
     public void startConnection() {
-
         connectionThread.start();
     }
 
@@ -37,7 +37,6 @@ public abstract class NetworkConnection {
      * @throws Exception failed to send data
      */
     public void send(Serializable data) throws Exception {
-
         connectionThread.out.writeObject(data);
     }
 
@@ -47,7 +46,6 @@ public abstract class NetworkConnection {
      * @throws Exception connection failed
      */
     public void closeConnection() throws Exception {
-
         connectionThread.socket.close();
     }
 
@@ -73,27 +71,28 @@ public abstract class NetworkConnection {
 
         private Socket socket;
         private ObjectOutputStream out;
+        private ObjectInputStream in;
+        private Serializable data;
+
+        private void setFields() throws IOException {
+            ServerSocket server = isServer() ? new ServerSocket(getPort()) : null;
+            Socket socket = isServer() ? server.accept() : new Socket(getIP(), getPort());
+            this.socket = socket;
+            this.out =  new ObjectOutputStream(socket.getOutputStream());
+            this.in =   new ObjectInputStream(socket.getInputStream());
+            socket.setTcpNoDelay(true);
+        }
 
         @Override
         public void run() {
-
-            try (ServerSocket server = isServer() ? new ServerSocket(getPort()) : null;
-                 Socket socket = isServer() ? server.accept() : new Socket(getIP(), getPort());
-                 ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
-                 ObjectInputStream in = new ObjectInputStream(socket.getInputStream())) {
-
-                this.socket = socket;
-                this.out = out;
-                socket.setTcpNoDelay(true);
-
+            try  {
+                setFields();
                 while (true) {
-                    Serializable data = (Serializable) in.readObject();
-                    onReceiveCallback.accept(data);
+                        data = (Serializable)in.readObject();
+                        onReceiveCallback.accept(data);
                 }
-
             } catch (Exception e) {
-
-                onReceiveCallback.accept("Connection closed.");
+                onReceiveCallback.accept("Connection closed." + e.toString() + " Cause " + e.getCause());
             }
         }
     }

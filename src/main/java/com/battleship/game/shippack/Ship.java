@@ -18,7 +18,6 @@ public class Ship {
      * @param y2 = the tail y coordinate.
      */
     public Ship(int x1, int y1, int x2, int y2) {
-
         head_coordinates = new int[]{x1,y1};
         tail_coordinates = new int[]{x2,y2};
         length = (x2 - x1 == 0) ? y2 - y1 : x2 - x1;

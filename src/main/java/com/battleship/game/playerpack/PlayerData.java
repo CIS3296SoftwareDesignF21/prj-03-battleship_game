@@ -14,6 +14,10 @@ public class PlayerData implements Serializable {
         avatarImage = avatar;
     }
 
+    public PlayerData(String name) {
+        this(name, null);
+    }
+
     public String getName() {
         return userName;
     }
