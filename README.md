@@ -70,14 +70,14 @@ Players will also have the ability to play solo against the computer if they do 
 + Once downloaded, navigate to where the file is saved and double click it to run. 
 + When the game menu is displayed, click "host game" to begin a game. 
 + Then to join a game, you can either use the same BattleShip instance, or run another instance of the BattleShip and select "join game".
-++ The correct IP and port will have to be supplied. 
++ The correct IP and port will have to be supplied. (Online Only)
 
 ### *From your IDE*
 + Fire up your favorite ide and make sure you have java 14 installed on our machine. 
-++ If you are using Intellij, you will have to follow a few steps to get the code to compilesuccessfully. 
++ If you are using Intellij, you will have to follow a few steps to get the code to compilesuccessfully. 
 + From Intellij, hit File->Settings->Editor->GUI Designer. 
 + Once this window is opened up, click the button that says generate GUI into java source code. 
-++ This will allow you to develop, test, and run the BattleShip program from your IDE. 
++ This will allow you to develop, test, and run the BattleShip program from your IDE. 
 
 ### *Local Network Only*
 The game works with no issues when using it on a local network.
