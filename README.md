@@ -1,4 +1,4 @@
-# BattleShip ![CodeQL](https://github.com/Sokom141/BattleShip/workflows/CodeQL/badge.svg)
+# BattleShip 
 A simple battleship game written in Java with a Graphical User Interface and optional online playing.
 
 
@@ -66,30 +66,31 @@ Players will also have the ability to play solo against the computer if they do 
 ## How to Run
 
 ### *From JAR file*
-Download the BattleShip.jar file from the releases tab. Once downloaded, navigate to where the file is saved and double click it to run. When the game menu
-is displayed, click "host game" to begin a game. Then to join a game, you can either use the same BattleShip instance, or 
-run another instance of the BattleShip and select "join game". The 
-correct IP and port will have to be supplied. 
++ Download the BattleShip.jar file from the releases tab.
++ Once downloaded, navigate to where the file is saved and double click it to run.
++ When the game menu is displayed, click "host game" to begin a game.
++ Then to join a game, you can either use the same BattleShip instance, or run another instance of the BattleShip and select "join game".
++ The correct IP and port will have to be supplied. (Online Only)
 
 ### *From your IDE*
-Fire up your favorite ide and make sure you have java 14 installed on our machine. 
-If you are using Intellij, you will have to follow a few steps to get the code to compile
-successfully. From Intellij, hit File->Settings->Editor->GUI Designer. Once this window
-is opened up, click the button that says generate GUI into java source code. This will allow you to develop, test, and run the
-BattleShip program from your IDE. 
++ Fire up your favorite ide and make sure you have java 14 installed on your machine.
++ If you are using Intellij, you will have to follow a few steps to get the code to compilesuccessfully.
++ From Intellij, hit File->Settings->Editor->GUI Designer.
++ Once this window is opened up, click the button that says generate GUI into java source code.
++ This will allow you to develop, test, and run the BattleShip program from your IDE.
 
-### Play over the Internet
+### *Local Network Only*
 The game works with no issues when using it on a local network.
 More testing and development is to come with using the public internet to run the game.
 
 ## Vision Statement
-This game is being developed for people of all ages who enjoy playing the classic game, BattleShip. People who 
-love to play battleship, but may not have the time to set up a classic board and play 
+This game is being developed for people of all ages who enjoy playing the classic game, BattleShip. People who
+love to play battleship, but may not have the time to set up a classic board and play
 in person, or who want to play with their friends over the internet, can all benefit from playing
 this new and improved battleship game. The battleship game is a lightweight and fun
 videogame that benefits players of all ages because of it's simplicity. It is also open source,
 so enthusiasts of the game can go under-the-hood and see how the game operates. Unlink other BattlehShip games,
-like BATTLESHIP - Multiplayer Game, which is $4.99, our game is completely free and tons of fun. 
+like BATTLESHIP - Multiplayer Game, which is $4.99, our game is completely free and tons of fun.
 
 ## Personas
 
@@ -110,13 +111,21 @@ she only recommends this game to her friends that she thinks are technologically
 
 Tanaka is a 21 year old gaming enthusiast and gamer who works at a PNC Bank's IT department.
 He enjoys playing video games regularly but is unable to play the games he plays at home due to his job.
-Since he enjoys multiplayer games online, he decides he can play the Battleship game with his coworkers locally and if need be online with others.
-He is able to navigate the Battleship UI very easily because of his technological background.
+and ability to play with her friends over the internet. However, since the game uses networking,
+she only recommends this game to her friends that she thinks are technologically competent.
+
+## Juan-Carlo Villamor Mercado
+
+Tanaka is a 21 year old gaming enthusiast and gamer who works at a PNC Bank's IT department. He enjoys playing video games regularly but is unable to play the games he plays at home due to his job. Since he enjoys multiplayer games online, he decides he can play the Battleship game with his coworkers locally and if need be online with others. Tanaka is interested in this version of battleship because of the different features implemented. Such features are power ups, the auto placement for the ships, as well as the online multiplayer aspect. Compared to the traditional version of Battleship, he prefers to play this version because each game is also very short due to the power ups. Due to the power ups, it can be an easy win or easy loss which enables him to play with another opponent faster than the traditional battleship game. He is able to navigate the Battleship UI very easily because of his technological background and is able to understand the game with the added featuress.
 
 ## John Crane
 
 Amanda, age 33, is an elementary school teacher at Jarrettown Elementary School
 in Upper Dublin, PA. She graduated from Millersville University. She’s been teaching fifth
+grade for just over 3 years now and she absolutely loves her job and her students.
+She also has a two year old daughter and a five year old son, so she's no stranger
+to working with little kids. In fact, she's so good with her students that she’s
+essentially solidified her status as the cool teacher.
 grade for just over 3 years now and she absolutely loves her job and her students.
 She also has a two year old daughter and a five year old son, so she's no stranger
 to working with little kids. In fact, she's so good with her students that she’s
@@ -134,11 +143,15 @@ thinks this could be a great way to keep the kids occupied. Ideally for her, the
 game would be easy enough for the students to play on their own so she can
 enjoy a break while the kids have indoor recess.
 
+## Felix Chen
+Raymond Scott is a 34 years old port crane operator who works at the port of Philadelphia. Ever since he was a kid, he enjoyed playing all kind of board gam with his family, especially battleship. Now he is a enthusiastic gamer, and he still very much enjoys battleship. During his break he will play the battleship game with his co-op friend. He can also play the battleship game over the weekend with friends over the internet. He thinks the battleship UI is very clean and simple, and easy to navigate.
+
+## Elon Fisher
+![DNPersona](https://user-images.githubusercontent.com/47299145/140327921-fe76cf8f-c3c0-4d65-94eb-8c77ea530228.png)
+=======
 ## Dat Nguyen
 ![DNPersona](https://user-images.githubusercontent.com/47299145/140327921-fe76cf8f-c3c0-4d65-94eb-8c77ea530228.png)
 
-
 ## Week 1 Tasks
-[Click Here](https://github.com/CIS3296SoftwareDesignF21/prj-03-battleship_game/blob/network-fix/Week1.md)
-
+[Click Here](https://github.com/CIS3296SoftwareDesignF21/prj-03-battleship_game/blob/main/Week1.md)
 
