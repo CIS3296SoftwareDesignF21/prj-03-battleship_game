@@ -43,6 +43,14 @@ public class GameBoard {
     private JRadioButton btnPowerUpLineVert;
     private JRadioButton btnPowerUpLineHorizontal;
     private JRadioButton btnPowerUpMaxHitDamage;
+<<<<<<< Updated upstream
+=======
+    private JLabel whosTurnLabel;
+    private JButton replayGameButton;
+    private JLabel yourScore;
+    private JLabel enemyScore;
+    private String enemyName = "Enemy Player";
+>>>>>>> Stashed changes
     private boolean isUserDataSet = false;
     private boolean isUserTurn = Player.isHost();
 
