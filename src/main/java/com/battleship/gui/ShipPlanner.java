@@ -42,6 +42,9 @@ public class ShipPlanner implements ActionListener {
     private final int port;
     private final String ip;
 
+    //Button was added to generate the random ship placement
+    private JButton randomPlacement;
+
     public ShipPlanner(boolean isServer, int port, String ip) {
         frame = new JFrame("Place your ships");
         $$$setupUI$$$();
