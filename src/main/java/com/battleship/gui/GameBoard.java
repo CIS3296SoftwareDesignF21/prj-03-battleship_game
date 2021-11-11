@@ -30,6 +30,7 @@ public class GameBoard {
     private JTextField input;
     private final JButton[][] enemyPositions = new JButton[10][10];
     private final int PLAYING = 0;
+    private int currentScore = 0;
     private NetworkConnection connection;
     private final ButtonHandler buttonHandler = new ButtonHandler();
     private final PowerUpHandler powerUpHandler = new PowerUpHandler();
@@ -45,6 +46,8 @@ public class GameBoard {
     private JRadioButton btnPowerUpMaxHitDamage;
     private JLabel whosTurnLabel;
     private JButton replayGameButton;
+    private JLabel enemyScore;
+    private JLabel yourScore;
     private String enemyName = "Enemy Player";
     private boolean isUserDataSet = false;
     private boolean isUserTurn = Player.isHost();
@@ -143,6 +146,11 @@ public class GameBoard {
         whosTurnLabel.setForeground(isUserTurn ? Color.GREEN : Color.RED);
     }
 
+    private void setScoreLabel() {
+        yourScore.setText("Score: " + currentScore);
+    }
+
+
     /**
      * Called if the Player is the server
      *
@@ -217,8 +225,10 @@ public class GameBoard {
             updateHitWithPowerUp(posToAttack);
             disableChosenPowerUp(posToAttack[3]);
         } else if (posToAttack[0] == SHIP_HIT) { // The enemy sends back the int array with a 1 in first position to signal that he has been hit
+            currentScore++;
             enemyPositions[posToAttack[1]][posToAttack[2]].setBackground(Color.RED);
             isUserTurn = true;
+            setScoreLabel();
             setTurnLabel();
         } else if (posToAttack[0] == GAME_WON) {
             JOptionPane.showMessageDialog(frame,
@@ -437,6 +447,12 @@ public class GameBoard {
         replayGameButton.setEnabled(false);
         replayGameButton.setText("Replay Game?");
         mainPanel.add(replayGameButton, new GridConstraints(3, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        enemyScore = new JLabel();
+        enemyScore.setText("Score");
+        mainPanel.add(enemyScore, new GridConstraints(0, 2, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        yourScore = new JLabel();
+        yourScore.setText("Score");
+        mainPanel.add(yourScore, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
     }
 
     /**
