@@ -25,15 +25,11 @@ public class ClientDialog extends JDialog {
     private JPanel panelButtons;
 
     public ClientDialog() {
-
         setContentPane(contentPane);
         setModal(true);
         getRootPane().setDefaultButton(buttonOK);
-
         buttonOK.addActionListener(e -> onOK());
-
         buttonCancel.addActionListener(e -> onCancel());
-
         // call onCancel() when cross is clicked
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
         addWindowListener(new WindowAdapter() {
@@ -41,11 +37,9 @@ public class ClientDialog extends JDialog {
                 onCancel();
             }
         });
-
         // call onCancel() on ESCAPE
         contentPane.registerKeyboardAction(e -> onCancel(),
                 KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
-
         pack();
         setLocationRelativeTo(null);
         setVisible(true);
@@ -55,16 +49,11 @@ public class ClientDialog extends JDialog {
      * starts the ship configuration by clicking the OK button
      */
     private void onOK() {
-
         String ip = ipField.getText();
-
         try {
             int port = Integer.parseInt(portField.getText());
-
             if (AddressChecker.isValidIPv4(ip) && AddressChecker.isValidPort(port)) {
-
                 SwingUtilities.invokeLater(() -> new ShipPlanner(false, port, ip));
-
                 dispose();
             } else {
                 JOptionPane.showMessageDialog(this,
@@ -83,7 +72,6 @@ public class ClientDialog extends JDialog {
     }
 
     private void onCancel() {
-
         dispose();
     }
 

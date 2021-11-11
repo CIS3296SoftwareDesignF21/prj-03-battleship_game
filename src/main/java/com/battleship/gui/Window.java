@@ -154,7 +154,6 @@ public class Window {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-
             Object source = e.getSource();
             if (source == b_exit) {
                 System.exit(0);
