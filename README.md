@@ -109,13 +109,6 @@ she only recommends this game to her friends that she thinks are technologically
 
 ## Juan-Carlo Villamor Mercado
 
-Tanaka is a 21 year old gaming enthusiast and gamer who works at a PNC Bank's IT department.
-He enjoys playing video games regularly but is unable to play the games he plays at home due to his job.
-and ability to play with her friends over the internet. However, since the game uses networking,
-she only recommends this game to her friends that she thinks are technologically competent.
-
-## Juan-Carlo Villamor Mercado
-
 Tanaka is a 21 year old gaming enthusiast and gamer who works at a PNC Bank's IT department. He enjoys playing video games regularly but is unable to play the games he plays at home due to his job. Since he enjoys multiplayer games online, he decides he can play the Battleship game with his coworkers locally and if need be online with others. Tanaka is interested in this version of battleship because of the different features implemented. Such features are power ups, the auto placement for the ships, as well as the online multiplayer aspect. Compared to the traditional version of Battleship, he prefers to play this version because each game is also very short due to the power ups. Due to the power ups, it can be an easy win or easy loss which enables him to play with another opponent faster than the traditional battleship game. He is able to navigate the Battleship UI very easily because of his technological background and is able to understand the game with the added featuress.
 
 ## John Crane
