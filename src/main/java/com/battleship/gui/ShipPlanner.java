@@ -5,6 +5,7 @@ import com.battleship.game.shippack.Ship;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
+import org.apache.commons.collections.map.HashedMap;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
@@ -15,9 +16,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.util.Locale;
-import java.util.Objects;
-import java.util.Random;
+import java.util.*;
 
 
 /*
@@ -51,6 +50,7 @@ public class ShipPlanner implements ActionListener {
         $$$setupUI$$$();
         buttonOk.addActionListener(this);
         buttonReset.addActionListener(this);
+        randomPlacement.addActionListener(this);
         this.setButtons();
         frame.add(panel, BorderLayout.CENTER);
         frame.setContentPane(panel);
@@ -103,8 +103,78 @@ public class ShipPlanner implements ActionListener {
         else if (source == buttonReset) {
             board.field.clear(); // resets hashmap
             resetPlanner();
+
+
+            //random placement button
+            randomPlacement.setEnabled(true);
+        } else if (source == randomPlacement) {
+
+            Map<Integer, Integer> map = new HashMap<>();
+
+            //1 4 unit ship
+            map.put(1, 4);
+
+            //2 3 unit ships
+            map.put(2, 3);
+
+            //3 2 unit ships
+            map.put(3, 2);
+
+            //4 1 unit ships
+            map.put(4, 1);
+
+            for (int k : map.keySet()) {
+
+                boolean check = false;
+                System.out.println("My Key is: " + k);
+                for (int i = 0; i < k; i++) {
+                    int shipLength = map.get(k);
+                    System.out.println("Trying to place shiplen : " + shipLength);
+
+                    while (!check) {
+
+                            //random generator
+                            Random R = new Random();
+                            Random C = new Random();
+
+                            //random row generator from 0-9
+                            int randomRow = Math.abs(R.nextInt() % 10);
+                            //random column generator from 0-9
+                            int randomColumn = Math.abs(C.nextInt() % 10);
+
+                            //NEED TO FIND WHAT THE KEY IS LATER
+
+                            //checking for Horiztonal placement
+                            int xVal = randomColumn + shipLength - 1;
+                            int yVal = randomRow + shipLength - 1;
+                            try {
+                                if (positions[randomRow][randomColumn].isEnabled() && positions[randomRow][xVal].isEnabled()) {
+                                    board.addShip(new Ship(randomRow, randomColumn, randomRow, randomColumn + shipLength), null);
+
+                                    for (int l = randomColumn; l < randomColumn + shipLength; l++) {
+                                        positions[randomRow][l].setBackground(Color.BLUE);
+                                    }
+                                    check = true;
+                                }
+
+                                //checking for Vertical placement
+                                if (positions[randomRow][randomColumn].isEnabled() && positions[yVal][randomColumn].isEnabled()) {
+                                    board.addShip(new Ship(randomRow, randomColumn, randomRow, randomColumn + shipLength), null);
+
+                                    for (int l = randomRow; l < randomRow + shipLength; l++) {
+                                        positions[l][randomColumn].setBackground(Color.BLUE);
+                                    }
+                                    check = true;
+                                }
+                            } catch (IndexOutOfBoundsException ex) {
+                                // do nothing, just go back in loop
+                            }
+                        }
+                    }
+                }
+                System.out.println("Just added a ship");
+            }//end for()
         }
-    }
 
     private void resetPlanner() {
         comboBoxShipSelector.removeAllItems();
@@ -233,45 +303,18 @@ public class ShipPlanner implements ActionListener {
                                     board.addShip(new Ship(i, j, i, j + shipLen), (String) comboBoxShipSelector.getSelectedItem());
                                     comboBoxShipSelector.removeItem(comboBoxShipSelector.getSelectedItem());
                                 }
+                            } else if (i + shipLen <= 10 && isValidPosition(i, j, i + shipLen - 1, j)) {
+                                for (int l = i; l < i + shipLen; l++) {
+                                    this.disableSurrounding(l, j);
+                                    positions[l][j].setBackground(Color.BLUE);
+                                }
+                                board.addShip(new Ship(i, j, i + shipLen, j), (String) comboBoxShipSelector.getSelectedItem());
+                                comboBoxShipSelector.removeItem(comboBoxShipSelector.getSelectedItem());
                             }
 
-                            else if (i + shipLen <= 10 && isValidPosition(i, j, i + shipLen - 1, j)) {
-                                    for (int l = i; l < i + shipLen; l++) {
-                                        this.disableSurrounding(l, j);
-                                        positions[l][j].setBackground(Color.BLUE);
-                                    }
-                                    board.addShip(new Ship(i, j, i + shipLen, j), (String) comboBoxShipSelector.getSelectedItem());
-                                    comboBoxShipSelector.removeItem(comboBoxShipSelector.getSelectedItem());
+                            if (comboBoxItemCount == 1) {
+                                buttonOk.setEnabled(true);
                             }
-
-                            //Added to implement random ship placement button.
-                            //This will allow the ships to be place randomly
-                            else {
-
-                                //button will be set to false for not being clicked on
-                                randomPlacement.setEnabled(false);
-
-                                //listener will listen for random placement button to be clicked
-                                //then generate the grid
-                                randomPlacement.addActionListener(new ActionListener() {
-                                    @Override
-                                    public void actionPerformed(ActionEvent e) {
-
-                                        //if button was clicked, button will be set to true
-                                        if (comboBoxItemCount == 0) {
-
-
-
-
-                                        }
-
-
-                                    }
-                                });
-
-                            }
-
-                            if (comboBoxItemCount == 1) {buttonOk.setEnabled(true);}
 
                         }
                     }
