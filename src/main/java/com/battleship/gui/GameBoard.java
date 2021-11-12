@@ -338,8 +338,11 @@ public class GameBoard {
                 }
                 break;
             case 3:
+                //when player hit enemy with Max Powerup
+                yourCurrentScore++;
                 System.out.println("Max Damage powerup enabled");
                 handleMaxDamageEnemyBoard(posToAttack[1], posToAttack[2]);
+                setScoreLabel();
                 break;
             default:
                 break;
