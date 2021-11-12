@@ -147,7 +147,7 @@ enjoy a break while the kids have indoor recess.
 Raymond Scott is a 34 years old port crane operator who works at the port of Philadelphia. Ever since he was a kid, he enjoyed playing all kind of board gam with his family, especially battleship. Now he is a enthusiastic gamer, and he still very much enjoys battleship. During his break he will play the battleship game with his co-op friend. He can also play the battleship game over the weekend with friends over the internet. He thinks the battleship UI is very clean and simple, and easy to navigate.
 
 ## Dat Nguyen
-![DNPersona](https://user-images.githubusercontent.com/47299145/140327921-fe76cf8f-c3c0-4d65-94eb-8c77ea530228.png)
+![Elon Fisher (Persona)-1](https://user-images.githubusercontent.com/47299145/141406497-40dfe06e-bcce-4e53-860c-2cfa158998bd.png)
 
 ## Week 1 Tasks
 [Click Here](https://github.com/CIS3296SoftwareDesignF21/prj-03-battleship_game/blob/main/Week1.md)
