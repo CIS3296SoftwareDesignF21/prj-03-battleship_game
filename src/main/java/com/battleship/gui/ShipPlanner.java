@@ -17,6 +17,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.Locale;
 import java.util.Objects;
+import java.util.Random;
 
 
 /*
@@ -245,8 +246,28 @@ public class ShipPlanner implements ActionListener {
 
                             //Added to implement random ship placement button.
                             //This will allow the ships to be place randomly
-                            else if (i + shipLen <= 10 && isValidPosition(i, j, i + shipLen - 1, j) && randomPlacement = true ) {
+                            else {
 
+                                //button will be set to false for not being clicked on
+                                randomPlacement.setEnabled(false);
+
+                                //listener will listen for random placement button to be clicked
+                                //then generate the grid
+                                randomPlacement.addActionListener(new ActionListener() {
+                                    @Override
+                                    public void actionPerformed(ActionEvent e) {
+
+                                        //if button was clicked, button will be set to true
+                                        if (comboBoxItemCount == 0) {
+
+
+
+
+                                        }
+
+
+                                    }
+                                });
 
                             }
 
