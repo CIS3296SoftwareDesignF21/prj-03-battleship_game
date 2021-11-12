@@ -9,3 +9,7 @@
 - Implemented powerups
 - Networking fixes
 - Began implementing replay game button
+
+# John C
+- Currently working on getting the server to wait for the client to join the game before placing ships
+- Assisting Juan-Carlo with Random Ship Generator
