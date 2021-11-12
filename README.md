@@ -151,3 +151,6 @@ Raymond Scott is a 34 years old port crane operator who works at the port of Phi
 
 ## Week 1 Tasks
 [Click Here](https://github.com/CIS3296SoftwareDesignF21/prj-03-battleship_game/blob/main/Week1.md)
+
+## Week 2 Tasks
+[Click Here](https://github.com/CIS3296SoftwareDesignF21/prj-03-battleship_game/blob/main/Week2.md)
