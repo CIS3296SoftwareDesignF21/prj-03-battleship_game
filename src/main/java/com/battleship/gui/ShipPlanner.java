@@ -245,7 +245,8 @@ public class ShipPlanner implements ActionListener {
 
                             //Added to implement random ship placement button.
                             //This will allow the ships to be place randomly
-                            else if (i + shipLen <= 10 && isValidPosition()){
+                            else if (i + shipLen <= 10 && isValidPosition(i, j, i + shipLen - 1, j) && randomPlacement = true ) {
+
 
                             }
 
