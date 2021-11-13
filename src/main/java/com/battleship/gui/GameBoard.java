@@ -8,6 +8,7 @@ import com.battleship.networking.NetworkConnection;
 import com.battleship.networking.Server;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
+
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
 import javax.swing.plaf.FontUIResource;
@@ -37,6 +38,8 @@ public class GameBoard {
     private final int SHIP_HIT = 1;
     private final int GAME_WON = 2;
     private int powerUpVal = 0;
+    private int port = 0;
+    private String ip;
     private JFrame frame;
     private JLabel playerFieldLabel;
     private JLabel enemyFieldLabel;
@@ -47,12 +50,14 @@ public class GameBoard {
     private JButton replayGameButton;
     private String enemyName = "Enemy Player";
     private boolean isUserDataSet = false;
+    private boolean isServer;
     private boolean isUserTurn = Player.isHost();
 
-    public GameBoard() {
+    public GameBoard(int port, String ip, boolean isServer) {
         frame = new JFrame("Battleship Game");
         $$$setupUI$$$();
         input.addActionListener(buttonHandler);
+        replayGameButton.addActionListener(buttonHandler);
         btnPowerUpLineVert.addActionListener(powerUpHandler);
         btnPowerUpLineHorizontal.addActionListener(powerUpHandler);
         btnPowerUpMaxHitDamage.addActionListener(powerUpHandler);
@@ -64,6 +69,9 @@ public class GameBoard {
         this.setEnemyButtons();
         this.setUserElements();
         this.setTurnLabel();
+        this.ip = ip;
+        this.port = port;
+        this.isServer = isServer;
         frame.add(mainPanel, BorderLayout.CENTER);
         frame.setSize(1000, 800); //TODO: set a good size for the game.
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -146,9 +154,8 @@ public class GameBoard {
     /**
      * Called if the Player is the server
      *
-     * @param port the port where the game will be hosted
      */
-    public void createServer(int port) {
+    public void createServer() {
         connection = new Server(data -> SwingUtilities.invokeLater(() -> handleData(data)), port);
         try {
             connection.startConnection();
@@ -159,11 +166,8 @@ public class GameBoard {
 
     /**
      * Called if the Player is the client
-     *
-     * @param ip   the IP of the server to connect
-     * @param port the port of the server to connect
      */
-    public void createClient(String ip, int port) {
+    public void createClient() {
         connection = new Client(data -> SwingUtilities.invokeLater(() -> handleData(data)), ip, port);
         try {
             connection.startConnection();
@@ -189,14 +193,46 @@ public class GameBoard {
     private void handleData(Object data) {
         setTurnLabel();
         if (data instanceof String) {
-            // got a chat message
-            messages.append(data.toString() + "\n");
+            // check the string input from the other player
+            checkInputFromPlayer((String) data);
         } else if (data instanceof PlayerData) {
             // got the player data
             setPlayerData(data);
         } else {
             // got game data
             handleGameData((int[]) data);
+        }
+    }
+
+    private void checkInputFromPlayer(String data) {
+        // check if we got replay message
+        if (data.equals("replay")) {
+            messages.append(enemyName + " would like to play again!\n");
+            messages.append("Type 'yes' to replay match, 'no' to quit\n");
+        }
+        // check if we got the ack message
+        else if (data.equals(enemyName + ": yes") || data.equals(enemyName + ": no")) {
+            handleReplay(data);
+        }
+        // got a chat message
+        else {
+            messages.append(data.toString() + "\n");
+        }
+    }
+
+    private void handleReplay(String data) {
+        if (data.equals(enemyName + ": yes")) {
+            try {
+                connection.closeConnection();
+                replayGameWait();
+                SwingUtilities.invokeLater(() -> new ShipPlanner(isServer, port, ip));
+                frame.dispose();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        else if (data.equals(enemyName + ": no")) {
+            frame.dispose();
         }
     }
 
@@ -468,10 +504,15 @@ public class GameBoard {
         return mainPanel;
     }
 
+    private void replayGameWait() {
+        if (!isServer) {
+            JOptionPane.showMessageDialog(frame,
+                    "Please wait for host to set board",
+                    "BattleShip Replay",
+                    JOptionPane.INFORMATION_MESSAGE);
+        }
+    }
 
-    /**
-     * Private class to handle buttons.
-     */
     private class ButtonHandler implements ActionListener {
 
         @Override
@@ -479,19 +520,31 @@ public class GameBoard {
             // send the chat message
             Object source = e.getSource();
             if (source == input) {
-                //System.out.println(input.getText());
                 String message = Player.getName() + ": ";
                 message += input.getText();
                 input.setText("");
                 messages.append(message + "\n");
                 try {
                     connection.send(message);
+                    if (message.equals(Player.getName() + ": yes")) {
+                        connection.closeConnection();
+                        replayGameWait();
+                        SwingUtilities.invokeLater(() -> new ShipPlanner(isServer, port, ip));
+                        frame.dispose();
+                    }
                 } catch (Exception ex) {
                     messages.append("Failed to send\n");
                     ex.printStackTrace();
                 }
+            } else if (source == replayGameButton) {
+                try {
+                    connection.send("replay");
+                } catch (Exception ex) {
+                    messages.append("Failed to send replay\n");
+                    ex.printStackTrace();
+                }
             } else {
-                // send the data to the other player
+                // send the data to the other player whenever an user clicks on a square
                 if (isUserTurn) {
                     sendDataToPlayer(source);
                 }
@@ -501,7 +554,6 @@ public class GameBoard {
         /**
          * Test print function to see the chosen position to attack. Should be removed.
          *
-         * @param src Button source
          */
         private void sendDataToPlayer(Object src) {
             for (int i = 0; i < 10; i++) {
@@ -527,10 +579,7 @@ public class GameBoard {
      * Private class to handle power ups
      */
     private class PowerUpHandler implements ActionListener {
-        /**
-         * Powerups are working but there are some bugs
-         * The wrong hits are displayed sometimes
-         */
+
         @Override
         public void actionPerformed(ActionEvent e) {
             Object source = e.getSource();

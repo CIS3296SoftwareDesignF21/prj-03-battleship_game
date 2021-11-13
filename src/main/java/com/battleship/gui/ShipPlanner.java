@@ -86,11 +86,11 @@ public class ShipPlanner implements ActionListener {
         Object source = e.getSource();
         if (source == buttonOk) {
             SwingUtilities.invokeLater(() -> {
-                GameBoard gb = new GameBoard();
+                GameBoard gb = new GameBoard(port, ip, isServer);
                 if (isServer) {
-                    gb.createServer(port);
+                    gb.createServer();
                 } else {
-                    gb.createClient(ip, port);
+                    gb.createClient();
                 }
             });
             frame.dispose();
