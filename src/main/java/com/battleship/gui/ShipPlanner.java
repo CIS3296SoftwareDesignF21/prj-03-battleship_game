@@ -84,7 +84,6 @@ public class ShipPlanner implements ActionListener {
             }
         }
     }
-
     @Override
     public void actionPerformed(ActionEvent e) {
         Object source = e.getSource();
@@ -103,78 +102,63 @@ public class ShipPlanner implements ActionListener {
         else if (source == buttonReset) {
             board.field.clear(); // resets hashmap
             resetPlanner();
-
-
-            //random placement button
             randomPlacement.setEnabled(true);
         } else if (source == randomPlacement) {
-
+            // using a map to store number of ships and ship length
+            // Keys: Number of Ships, Values: Ship Length
             Map<Integer, Integer> map = new HashMap<>();
-
-            //1 4 unit ship
+            String dummyStringForBoard;  // needed for making unique board keys
+            int index = 0;               // needed for making unique board keys
+            // add ship data to the map, 10 ships total
             map.put(1, 4);
-
-            //2 3 unit ships
             map.put(2, 3);
-
-            //3 2 unit ships
             map.put(3, 2);
-
-            //4 1 unit ships
             map.put(4, 1);
-
+            // loop through the map
             for (int k : map.keySet()) {
-
-                boolean check = false;
-                System.out.println("My Key is: " + k);
                 for (int i = 0; i < k; i++) {
+                    boolean check = false;
                     int shipLength = map.get(k);
-                    System.out.println("Trying to place shiplen : " + shipLength);
-
                     while (!check) {
-
-                            //random generator
-                            Random R = new Random();
-                            Random C = new Random();
-
-                            //random row generator from 0-9
-                            int randomRow = Math.abs(R.nextInt() % 10);
-                            //random column generator from 0-9
-                            int randomColumn = Math.abs(C.nextInt() % 10);
-
-                            //NEED TO FIND WHAT THE KEY IS LATER
-
-                            //checking for Horiztonal placement
-                            int xVal = randomColumn + shipLength - 1;
-                            int yVal = randomRow + shipLength - 1;
-                            try {
-                                if (positions[randomRow][randomColumn].isEnabled() && positions[randomRow][xVal].isEnabled()) {
-                                    board.addShip(new Ship(randomRow, randomColumn, randomRow, randomColumn + shipLength), null);
-
-                                    for (int l = randomColumn; l < randomColumn + shipLength; l++) {
-                                        positions[randomRow][l].setBackground(Color.BLUE);
-                                    }
-                                    check = true;
+                        Random R = new Random();
+                        Random C = new Random();
+                        int randomRow = Math.abs(R.nextInt() % 10);
+                        int randomColumn = Math.abs(C.nextInt() % 10);
+                        int xVal = randomColumn + shipLength;
+                        int yVal = randomRow + shipLength;
+                        try {
+                            // make a unique string for the board's map
+                            // we don't care about the actual key, its only needed so that the
+                            // next step in the game, loading the actual gameboard, can work properly
+                            dummyStringForBoard = "battleShipGang" + index++;
+                            //checking for Horizontal placement
+                            if (positions[randomRow][randomColumn].isEnabled() && positions[randomRow][xVal].isEnabled()) {
+                                board.addShip(new Ship(randomRow, randomColumn, randomRow, randomColumn + shipLength), dummyStringForBoard);
+                                for (int l = randomColumn; l < randomColumn + shipLength; l++) {
+                                    positions[randomRow][l].setBackground(Color.BLUE);
+                                    positions[randomRow][l].setEnabled(false);
                                 }
-
-                                //checking for Vertical placement
-                                if (positions[randomRow][randomColumn].isEnabled() && positions[yVal][randomColumn].isEnabled()) {
-                                    board.addShip(new Ship(randomRow, randomColumn, randomRow, randomColumn + shipLength), null);
-
-                                    for (int l = randomRow; l < randomRow + shipLength; l++) {
-                                        positions[l][randomColumn].setBackground(Color.BLUE);
-                                    }
-                                    check = true;
-                                }
-                            } catch (IndexOutOfBoundsException ex) {
-                                // do nothing, just go back in loop
+                                check = true;
                             }
+                            //checking for Vertical placement
+                            else if (positions[randomRow][randomColumn].isEnabled() && positions[yVal][randomColumn].isEnabled()) {
+                                board.addShip(new Ship(randomRow, randomColumn, randomRow, randomRow + shipLength), dummyStringForBoard);
+                                for (int l = randomRow; l < randomRow + shipLength; l++) {
+                                    positions[l][randomColumn].setBackground(Color.BLUE);
+                                    positions[l][randomColumn].setEnabled(false);
+                                }
+                                check = true;
+                            }
+                        } catch (IndexOutOfBoundsException ex) {
+                            // do nothing, just go back in loop
                         }
                     }
+                    randomPlacement.setEnabled(false);
+                    buttonOk.setEnabled(true);
                 }
-                System.out.println("Just added a ship");
-            }//end for()
+            }
         }
+    }
 
     private void resetPlanner() {
         comboBoxShipSelector.removeAllItems();
