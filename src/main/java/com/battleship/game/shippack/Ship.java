@@ -92,26 +92,26 @@ public class Ship {
      * @return an array containing the ShipUnit elements.
      */
     private ShipUnit[] makeUnitList(int x1, int y1, int x2, int y2) {
-
-        ShipUnit[] list = new ShipUnit[length];
-
-        if (x1 - x2 == 0) { // vertical ship
-            for (int i = 0; i < length; i++) {
-                list[i] = new ShipUnit(x1, y1 + i);
+        if(length >= 0) {
+            ShipUnit[] list = new ShipUnit[length];
+            if (x1 - x2 == 0) { // vertical ship
+                for (int i = 0; i < length; i++) {
+                    list[i] = new ShipUnit(x1, y1 + i);
+                }
+            } else {            // horizontal ship
+                for (int i = 0; i < length; i++) {
+                    list[i] = new ShipUnit(x1 + i, y1);
+                }
             }
-        } else {            // horizontal ship
-            for (int i = 0; i < length; i++) {
-                list[i] = new ShipUnit(x1 + i, y1);
-            }
+            return list;
         }
-        return list;
+        return null;
     }
 
     /**
      * Method to rotate the Ship on the board
      */
     public void rotateShip() {
-
         if (head_coordinates[0] == tail_coordinates[0]) {
             tail_coordinates[0] += this.length;
         } else {

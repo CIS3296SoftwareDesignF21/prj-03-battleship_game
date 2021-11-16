@@ -6,9 +6,10 @@ import com.battleship.game.shippack.Ship;
 import com.battleship.networking.Client;
 import com.battleship.networking.NetworkConnection;
 import com.battleship.networking.Server;
+import com.battleship.game.powerup.PowerUp;
+import com.battleship.utils.SoundEffects;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
-
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
 import javax.swing.plaf.FontUIResource;
@@ -120,6 +121,9 @@ public class GameBoard {
         }
     }
 
+    /**
+     *  Setup the enemy board with the corresponding buttons
+     */
     private void setEnemyButtons() {
         for (int i = 0; i < 10; i++) {
             for (int j = 0; j < 10; j++) {
@@ -141,11 +145,17 @@ public class GameBoard {
         gameBoard2.setLayout(new GridLayout(10, 10));
     }
 
+    /**
+     * Set this players data
+     */
     private void setUserElements() {
         playerFieldLabel.setText(Player.getName() + "'s field");
         playerFieldLabel.setIcon(Player.getAvatar());
     }
 
+    /**
+     *  Set which player has the turn
+     */
     private void setTurnLabel() {
         whosTurnLabel.setText(isUserTurn ? "Your Turn" : enemyName + "'s Turn");
         whosTurnLabel.setForeground(isUserTurn ? Color.GREEN : Color.RED);
@@ -153,7 +163,6 @@ public class GameBoard {
 
     /**
      * Called if the Player is the server
-     *
      */
     public void createServer() {
         connection = new Server(data -> SwingUtilities.invokeLater(() -> handleData(data)), port);
@@ -182,6 +191,10 @@ public class GameBoard {
         }
     }
 
+    /**
+     *  Send this player's data to the other player
+     *  This is called first once both players connect
+     */
     public void sendUserData() {
         try {
             connection.send(new PlayerData(Player.getName()));
@@ -190,6 +203,11 @@ public class GameBoard {
         }
     }
 
+    /**
+     *  Handle the data sent from the other player
+     *  This is the callback function that is called in the
+     *  NetworkConnection thread
+     */
     private void handleData(Object data) {
         setTurnLabel();
         if (data instanceof String) {
@@ -204,6 +222,9 @@ public class GameBoard {
         }
     }
 
+    /**
+     *  Check the string data that's been received
+     */
     private void checkInputFromPlayer(String data) {
         // check if we got replay message
         if (data.equals("replay")) {
@@ -220,6 +241,10 @@ public class GameBoard {
         }
     }
 
+    /**
+     *  Check if the ack message from the other player
+     *  has been set to replay the game
+     */
     private void handleReplay(String data) {
         if (data.equals(enemyName + ": yes")) {
             try {
@@ -236,6 +261,9 @@ public class GameBoard {
         }
     }
 
+    /**
+     *  Set the enemy players data
+     */
     private void setPlayerData(Object data) {
         if (!isUserDataSet) {
             PlayerData enemy = (PlayerData) data;
@@ -247,58 +275,69 @@ public class GameBoard {
         }
     }
 
+    /**
+     *  Check what game data has been sent and see if there are any hits
+     */
     private void handleGameData(int[] posToAttack) {
         if (posToAttack[0] == SHIP_HIT && posToAttack[3] != 0) {
             // the other play got hit, so update their board
             updateHitWithPowerUp(posToAttack);
             disableChosenPowerUp(posToAttack[3]);
+            SoundEffects.playBoomDynamite(this);
         } else if (posToAttack[0] == SHIP_HIT) { // The enemy sends back the int array with a 1 in first position to signal that he has been hit
             enemyPositions[posToAttack[1]][posToAttack[2]].setBackground(Color.RED);
             isUserTurn = true;
             setTurnLabel();
+            SoundEffects.playBoom(this);
         } else if (posToAttack[0] == GAME_WON) {
-            JOptionPane.showMessageDialog(frame,
-                    "You won!",
-                    "Congratulations",
-                    JOptionPane.INFORMATION_MESSAGE);
-            replayGameButton.setEnabled(true);
-            replayGameButton.setVisible(true);
+            sendWinMessage();
         } else {
-            // check if this player got hit
-            if (playerPositions[posToAttack[1]][posToAttack[2]].isEnabled()) {
-                updatePlayerBoard(posToAttack);
-            } else {
-                // not hit, it's a new players turn now
-                isUserTurn = true;
-                setTurnLabel();
-            }
+            checkForPlayerHit(posToAttack);
         }
     }
 
+    /**
+     *  Check if the position to attack sent by the enemy is an enabled
+     *  location on this players board
+     */
+    private void checkForPlayerHit(int[] posToAttack) {
+        // check if this player got hit
+        if (playerPositions[posToAttack[1]][posToAttack[2]].isEnabled()) {
+            updatePlayerBoard(posToAttack);
+        } else {
+            // not hit, it's this players turn now
+            isUserTurn = true;
+            setTurnLabel();
+        }
+    }
+
+    /**
+     * This player won, show the winning message
+     */
+    private void sendWinMessage() {
+        JOptionPane.showMessageDialog(frame,
+                "You won!",
+                "Congratulations",
+                JOptionPane.INFORMATION_MESSAGE);
+        replayGameButton.setEnabled(true);
+        replayGameButton.setVisible(true);
+    }
+
+    /**
+     *  This player got hit by the enemy, update this players field
+     *  Will also check if the enemy had any powerups enabled
+     */
     private void updatePlayerBoard(int[] posToAttack) {
         playerPositions[posToAttack[1]][posToAttack[2]].setBackground(Color.BLACK);
         playerPositions[posToAttack[1]][posToAttack[2]].setEnabled(false);
-        if (posToAttack[3] == 1) {
-            // vertical-line powerup
-            for (int i = 0; i < 10; ++i) {
-                // vert line
-                playerPositions[i][posToAttack[2]].setBackground(Color.BLACK);
-                playerPositions[i][posToAttack[2]].setEnabled(false);
-            }
-        }
-        if (posToAttack[3] == 2) {
-            for (int i = 0; i < 10; ++i) {
-                // horizontal line powerup
-                playerPositions[posToAttack[1]][i].setBackground(Color.BLACK);
-                playerPositions[posToAttack[1]][i].setEnabled(false);
-            }
-        }
-        if (posToAttack[3] == 3) {
-            handleMaxDamagePlayerBoard(posToAttack[1], posToAttack[2]);
-        }
+        PowerUp.handlePowerUp(playerPositions, posToAttack, Color.BLACK);
         checkForWinAndSendData(posToAttack);
     }
 
+    /**
+     *  This player got hit by the enemy
+     *  Check if the game is over and send the data back to the other player
+     */
     private void checkForWinAndSendData(int[] posToAttack) {
         try {
             if (hasPlayerWin()) {
@@ -340,79 +379,48 @@ public class GameBoard {
         }
     }
 
+    /**
+     *  This player got a hit on the other player with a powerup enabled
+     *  Set the enemys board to red and handle the powerup
+     */
     private void updateHitWithPowerUp(int[] posToAttack) {
         System.out.println("Enemy got hit at pos " + posToAttack[1] + " and " + posToAttack[2]);
         enemyPositions[posToAttack[1]][posToAttack[2]].setBackground(Color.RED);
-        int row = posToAttack[1];
-        int col = posToAttack[2];
-        switch (posToAttack[3]) {
-            case 1:
-                System.out.println("Vertical powerup enabled");
-                for (int i = 0; i < 10; ++i) {
-                    enemyPositions[i][col].setBackground(Color.RED);
-                }
-                break;
-            case 2:
-                System.out.println("Horizontal powerup enabled");
-                for (int i = 0; i < 10; ++i) {
-                    enemyPositions[row][i].setBackground(Color.RED);
-                }
-                break;
-            case 3:
-                System.out.println("Max Damage powerup enabled");
-                handleMaxDamageEnemyBoard(posToAttack[1], posToAttack[2]);
-                break;
-            default:
-                break;
-        }
+        PowerUp.handlePowerUp(enemyPositions, posToAttack, Color.RED);
         isUserTurn = true;
         setTurnLabel();
     }
 
-    private void handleMaxDamagePlayerBoard(int row, int col) {
-        if (row - 1 >= 0) {
-            playerPositions[row - 1][col].setBackground(Color.BLACK);
-            playerPositions[row - 1][col].setEnabled(false);
-        }
-        if (row + 1 <= 9) {
-            playerPositions[row + 1][col].setBackground(Color.BLACK);
-            playerPositions[row + 1][col].setEnabled(false);
-
-        }
-        if (col - 1 >= 0) {
-            playerPositions[row][col - 1].setBackground(Color.BLACK);
-            playerPositions[row][col - 1].setEnabled(false);
-        }
-        if (col + 1 <= 9) {
-            playerPositions[row][col + 1].setBackground(Color.BLACK);
-            playerPositions[row][col + 1].setEnabled(false);
-        }
-    }
-
-    private void handleMaxDamageEnemyBoard(int row, int col) {
-        if (row - 1 >= 0) {
-            enemyPositions[row - 1][col].setBackground(Color.RED);
-        }
-        if (row + 1 <= 9) {
-            enemyPositions[row + 1][col].setBackground(Color.RED);
-        }
-        if (col - 1 >= 0) {
-            enemyPositions[row][col - 1].setBackground(Color.RED);
-        }
-        if (col + 1 <= 9) {
-            enemyPositions[row][col + 1].setBackground(Color.RED);
-        }
-    }
-
+    /**
+     *  Loop through all the positions on the player's board
+     *  and see if any are still enabled
+     *
+     *  If there are still positions enabled, the game is not done
+     *  If the player has no more enabled position, the game is over
+     */
     private boolean hasPlayerWin() {
         for (int i = 0; i < 10; i++) {
             for (int j = 0; j < 10; j++) {
                 if (playerPositions[i][j].isEnabled()) {
+                    System.out.println("Position " + i + " " + j + " is still enabled");
                     return false;
                 }
             }
         }
         return true;
+    }
+
+    /**
+     *  Check if this player needs to wait for the host to set their board first
+     *  before playing another game
+     */
+    private void replayGameWait() {
+        if (!isServer) {
+            JOptionPane.showMessageDialog(frame,
+                    "Please wait for the other player to set board",
+                    "BattleShip Replay",
+                    JOptionPane.INFORMATION_MESSAGE);
+        }
     }
 
     /**
@@ -476,6 +484,8 @@ public class GameBoard {
     }
 
     /**
+     * Auto-generated GUI stuff
+     *
      * @noinspection ALL
      */
     private Font $$$getFont$$$(String fontName, int style, int size, Font currentFont) {
@@ -498,26 +508,22 @@ public class GameBoard {
     }
 
     /**
+     * Auto-generated GUI stuff
+     *
      * @noinspection ALL
      */
     public JComponent $$$getRootComponent$$$() {
         return mainPanel;
     }
 
-    private void replayGameWait() {
-        if (!isServer) {
-            JOptionPane.showMessageDialog(frame,
-                    "Please wait for host to set board",
-                    "BattleShip Replay",
-                    JOptionPane.INFORMATION_MESSAGE);
-        }
-    }
-
+    /**
+     *  Private class that handles all game buttons for the main BattleShip Window
+     *  Whenever a gamegrid button is clicked, this listener is called
+     */
     private class ButtonHandler implements ActionListener {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            // send the chat message
             Object source = e.getSource();
             if (source == input) {
                 String message = Player.getName() + ": ";
@@ -525,10 +531,14 @@ public class GameBoard {
                 input.setText("");
                 messages.append(message + "\n");
                 try {
+                    // send the message to the other player
                     connection.send(message);
                     if (message.equals(Player.getName() + ": yes")) {
+                        // this is the ack message back to the other player for the replay
+                        // we should add another variable to make sure this is only being triggered
+                        // when the replay game button has been clicked
                         connection.closeConnection();
-                        replayGameWait();
+                        replayGameWait();   // check if this player needs to wait for host
                         SwingUtilities.invokeLater(() -> new ShipPlanner(isServer, port, ip));
                         frame.dispose();
                     }
@@ -538,13 +548,15 @@ public class GameBoard {
                 }
             } else if (source == replayGameButton) {
                 try {
+                    // the user clicked the replay button
+                    // ask the other user if they want to play again
                     connection.send("replay");
                 } catch (Exception ex) {
                     messages.append("Failed to send replay\n");
                     ex.printStackTrace();
                 }
             } else {
-                // send the data to the other player whenever an user clicks on a square
+                // send the data to the other player whenever a user clicks a square
                 if (isUserTurn) {
                     sendDataToPlayer(source);
                 }
@@ -552,8 +564,9 @@ public class GameBoard {
         }
 
         /**
-         * Test print function to see the chosen position to attack. Should be removed.
-         *
+         * Send the position to attack to the other player
+         * This will trigger the handleData() method on the other player's side
+         * and then they will tell us if we got a hit
          */
         private void sendDataToPlayer(Object src) {
             for (int i = 0; i < 10; i++) {
@@ -566,6 +579,7 @@ public class GameBoard {
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
+                        // disable the button that was just clicked
                         enemyPositions[i][j].setEnabled(false);
                         isUserTurn = false;
                         setTurnLabel();
@@ -577,21 +591,24 @@ public class GameBoard {
 
     /**
      * Private class to handle power ups
+     *
+     * Will be called everytime one of the buttons are clicked,
+     * but will only activate if the player gets a hit.
+     * Only one of each powerup can be used per game
      */
     private class PowerUpHandler implements ActionListener {
 
         @Override
         public void actionPerformed(ActionEvent e) {
             Object source = e.getSource();
-            // need to disable powerup if double-clicked
             if (source == btnPowerUpLineVert) {
-                powerUpVal = 1;
+                powerUpVal = PowerUp.VERTICAL;
             }
             if (source == btnPowerUpLineHorizontal) {
-                powerUpVal = 2;
+                powerUpVal = PowerUp.HORIZONTAL;
             }
             if (source == btnPowerUpMaxHitDamage) {
-                powerUpVal = 3;
+                powerUpVal = PowerUp.MAXDAMAGE;
             }
         }
     }
