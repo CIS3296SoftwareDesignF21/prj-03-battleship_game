@@ -268,6 +268,7 @@ public class ShipPlanner implements ActionListener {
         @Override
         public void mouseClicked(MouseEvent e) {
             Object source = e.getSource();
+            boolean isMac = System.getProperty("os.name", "").toLowerCase(Locale.ENGLISH).startsWith("mac");
             // TODO: refactor
             // this can be a way better alg.
             for (int i = 0; i < 10; i++) {
@@ -281,6 +282,7 @@ public class ShipPlanner implements ActionListener {
                                 if (j + shipLen <= 10 && isValidPosition(i, j, i, j + shipLen - 1)) {
                                     for (int l = j; l < j + shipLen; l++) {
                                         this.disableSurrounding(i, l);
+                                        if(isMac == true) positions[i][l].setOpaque(true);
                                         positions[i][l].setBackground(Color.BLUE);
                                     }
                                     board.addShip(new Ship(i, j, i, j + shipLen), (String) comboBoxShipSelector.getSelectedItem());
@@ -290,6 +292,15 @@ public class ShipPlanner implements ActionListener {
                                 for (int l = i; l < i + shipLen; l++) {
                                     this.disableSurrounding(l, j);
                                     positions[l][j].setBackground(Color.BLUE);
+                            } else {
+                                if (i + shipLen <= 10 && isValidPosition(i, j, i + shipLen - 1, j)) {
+                                    for (int l = i; l < i + shipLen; l++) {
+                                        this.disableSurrounding(l, j);
+                                        if(isMac == true) positions[l][j].setOpaque(true);
+                                        positions[l][j].setBackground(Color.BLUE);
+                                    }
+                                    board.addShip(new Ship(i, j, i + shipLen, j), (String) comboBoxShipSelector.getSelectedItem());
+                                    comboBoxShipSelector.removeItem(comboBoxShipSelector.getSelectedItem());
                                 }
                                 board.addShip(new Ship(i, j, i + shipLen, j), (String) comboBoxShipSelector.getSelectedItem());
                                 comboBoxShipSelector.removeItem(comboBoxShipSelector.getSelectedItem());

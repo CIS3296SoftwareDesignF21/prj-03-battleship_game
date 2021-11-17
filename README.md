@@ -109,13 +109,6 @@ she only recommends this game to her friends that she thinks are technologically
 
 ## Juan-Carlo Villamor Mercado
 
-Tanaka is a 21 year old gaming enthusiast and gamer who works at a PNC Bank's IT department.
-He enjoys playing video games regularly but is unable to play the games he plays at home due to his job.
-and ability to play with her friends over the internet. However, since the game uses networking,
-she only recommends this game to her friends that she thinks are technologically competent.
-
-## Juan-Carlo Villamor Mercado
-
 Tanaka is a 21 year old gaming enthusiast and gamer who works at a PNC Bank's IT department. He enjoys playing video games regularly but is unable to play the games he plays at home due to his job. Since he enjoys multiplayer games online, he decides he can play the Battleship game with his coworkers locally and if need be online with others. Tanaka is interested in this version of battleship because of the different features implemented. Such features are power ups, the auto placement for the ships, as well as the online multiplayer aspect. Compared to the traditional version of Battleship, he prefers to play this version because each game is also very short due to the power ups. Due to the power ups, it can be an easy win or easy loss which enables him to play with another opponent faster than the traditional battleship game. He is able to navigate the Battleship UI very easily because of his technological background and is able to understand the game with the added featuress.
 
 ## John Crane
@@ -147,8 +140,14 @@ enjoy a break while the kids have indoor recess.
 Raymond Scott is a 34 years old port crane operator who works at the port of Philadelphia. Ever since he was a kid, he enjoyed playing all kind of board gam with his family, especially battleship. Now he is a enthusiastic gamer, and he still very much enjoys battleship. During his break he will play the battleship game with his co-op friend. He can also play the battleship game over the weekend with friends over the internet. He thinks the battleship UI is very clean and simple, and easy to navigate.
 
 ## Dat Nguyen
-![DNPersona](https://user-images.githubusercontent.com/47299145/140327921-fe76cf8f-c3c0-4d65-94eb-8c77ea530228.png)
+![Elon Fisher (Persona)-1](https://user-images.githubusercontent.com/47299145/141406497-40dfe06e-bcce-4e53-860c-2cfa158998bd.png)
 
 ## Week 1 Tasks
 [Click Here](https://github.com/CIS3296SoftwareDesignF21/prj-03-battleship_game/blob/main/Week1.md)
+
+## Week 2 Tasks
+[Click Here](https://github.com/CIS3296SoftwareDesignF21/prj-03-battleship_game/blob/main/Week2.md)
+
+## Class Diagram
+![BattleshipUML-Page-1 drawio](https://user-images.githubusercontent.com/47299145/142140535-c7eb8dd5-30a4-406e-b2c6-4cd3e29bfc98.png)
 
