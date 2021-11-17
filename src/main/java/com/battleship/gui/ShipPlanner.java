@@ -222,7 +222,7 @@ public class ShipPlanner implements ActionListener {
                                 if (j + shipLen <= 10 && isValidPosition(i, j, i, j + shipLen - 1)) {
                                     for (int l = j; l < j + shipLen; l++) {
                                         this.disableSurrounding(i, l);
-                                        positions[i][l].setOpaque(true);
+                                        if(isMac == true) positions[i][l].setOpaque(true);
                                         positions[i][l].setBackground(Color.BLUE);
                                     }
                                     board.addShip(new Ship(i, j, i, j + shipLen), (String) comboBoxShipSelector.getSelectedItem());
@@ -232,6 +232,7 @@ public class ShipPlanner implements ActionListener {
                                 if (i + shipLen <= 10 && isValidPosition(i, j, i + shipLen - 1, j)) {
                                     for (int l = i; l < i + shipLen; l++) {
                                         this.disableSurrounding(l, j);
+                                        if(isMac == true) positions[l][j].setOpaque(true);
                                         positions[l][j].setBackground(Color.BLUE);
                                     }
                                     board.addShip(new Ship(i, j, i + shipLen, j), (String) comboBoxShipSelector.getSelectedItem());
