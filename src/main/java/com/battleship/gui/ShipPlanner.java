@@ -208,6 +208,7 @@ public class ShipPlanner implements ActionListener {
         @Override
         public void mouseClicked(MouseEvent e) {
             Object source = e.getSource();
+            boolean isMac = System.getProperty("os.name", "").toLowerCase(Locale.ENGLISH).startsWith("mac");
             // TODO: refactor
             // this can be a way better alg.
             for (int i = 0; i < 10; i++) {
