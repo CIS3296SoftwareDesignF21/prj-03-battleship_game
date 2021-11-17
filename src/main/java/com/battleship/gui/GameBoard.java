@@ -150,7 +150,7 @@ public class GameBoard {
      */
     private void setUserElements() {
         playerFieldLabel.setText(Player.getName() + "'s field");
-        playerFieldLabel.setIcon(Player.getAvatar());
+        //playerFieldLabel.setIcon(Player.getAvatar());
     }
 
     /**
@@ -269,7 +269,7 @@ public class GameBoard {
             PlayerData enemy = (PlayerData) data;
             if (enemy.getName().length() > 0) enemyName = enemy.getName();
             enemyFieldLabel.setText(enemy.getName() + "'s field");
-            enemyFieldLabel.setIcon(enemy.getAvatar());
+            //enemyFieldLabel.setIcon(enemy.getAvatar());
             sendUserData();
             isUserDataSet = true;
         }
