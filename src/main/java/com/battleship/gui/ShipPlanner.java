@@ -222,6 +222,7 @@ public class ShipPlanner implements ActionListener {
                                 if (j + shipLen <= 10 && isValidPosition(i, j, i, j + shipLen - 1)) {
                                     for (int l = j; l < j + shipLen; l++) {
                                         this.disableSurrounding(i, l);
+                                        positions[i][l].setOpaque(true);
                                         positions[i][l].setBackground(Color.BLUE);
                                     }
                                     board.addShip(new Ship(i, j, i, j + shipLen), (String) comboBoxShipSelector.getSelectedItem());
