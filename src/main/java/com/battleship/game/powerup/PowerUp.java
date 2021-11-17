@@ -33,15 +33,19 @@ public class PowerUp {
     public static void handleMaxDamage(JButton[][] positions, int row, int col, Color color) {
         if (row - 1 >= 0) {
             positions[row - 1][col].setBackground(color);
+            positions[row - 1][col].setEnabled(false);
         }
         if (row + 1 <= 9) {
             positions[row + 1][col].setBackground(color);
+            positions[row + 1][col].setEnabled(false);
         }
         if (col - 1 >= 0) {
             positions[row][col - 1].setBackground(color);
+            positions[row][col - 1].setEnabled(false);
         }
         if (col + 1 <= 9) {
             positions[row][col + 1].setBackground(color);
+            positions[row][col + 1].setEnabled(false);
         }
     }
 
