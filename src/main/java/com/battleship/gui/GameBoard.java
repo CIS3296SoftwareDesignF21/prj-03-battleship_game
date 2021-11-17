@@ -50,6 +50,10 @@ public class GameBoard {
     private JLabel whosTurnLabel;
     private JButton replayGameButton;
     private String enemyName = "Enemy Player";
+    private JLabel enemyScore;
+    private JLabel yourScore;
+    private int yourCurrentScore = 0;
+    private int enemyCurrentScore = 0;
     private boolean isUserDataSet = false;
     private boolean isServer;
     private boolean isUserTurn = Player.isHost();
@@ -86,6 +90,7 @@ public class GameBoard {
      * Then place them on another (disabled) grid layout of buttons
      */
     private void setShipOnBoard() {
+        setScoreLabel();
         for (Ship shipToPlace : ShipPlanner.board.field.values()) {
             int[] h_c = shipToPlace.getHeadCoordinates();
             int length = shipToPlace.getLength();
@@ -122,7 +127,7 @@ public class GameBoard {
     }
 
     /**
-     *  Setup the enemy board with the corresponding buttons
+     * Setup the enemy board with the corresponding buttons
      */
     private void setEnemyButtons() {
         for (int i = 0; i < 10; i++) {
@@ -154,11 +159,16 @@ public class GameBoard {
     }
 
     /**
-     *  Set which player has the turn
+     * Set which player has the turn
      */
     private void setTurnLabel() {
         whosTurnLabel.setText(isUserTurn ? "Your Turn" : enemyName + "'s Turn");
         whosTurnLabel.setForeground(isUserTurn ? Color.GREEN : Color.RED);
+    }
+
+    private void setScoreLabel() {
+        yourScore.setText("Your Score: " + yourCurrentScore);
+        enemyScore.setText("Enemy Score: " + enemyCurrentScore);
     }
 
     /**
@@ -192,8 +202,8 @@ public class GameBoard {
     }
 
     /**
-     *  Send this player's data to the other player
-     *  This is called first once both players connect
+     * Send this player's data to the other player
+     * This is called first once both players connect
      */
     public void sendUserData() {
         try {
@@ -204,9 +214,9 @@ public class GameBoard {
     }
 
     /**
-     *  Handle the data sent from the other player
-     *  This is the callback function that is called in the
-     *  NetworkConnection thread
+     * Handle the data sent from the other player
+     * This is the callback function that is called in the
+     * NetworkConnection thread
      */
     private void handleData(Object data) {
         setTurnLabel();
@@ -223,7 +233,7 @@ public class GameBoard {
     }
 
     /**
-     *  Check the string data that's been received
+     * Check the string data that's been received
      */
     private void checkInputFromPlayer(String data) {
         // check if we got replay message
@@ -242,8 +252,8 @@ public class GameBoard {
     }
 
     /**
-     *  Check if the ack message from the other player
-     *  has been set to replay the game
+     * Check if the ack message from the other player
+     * has been set to replay the game
      */
     private void handleReplay(String data) {
         if (data.equals(enemyName + ": yes")) {
@@ -255,14 +265,13 @@ public class GameBoard {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-        }
-        else if (data.equals(enemyName + ": no")) {
+        } else if (data.equals(enemyName + ": no")) {
             frame.dispose();
         }
     }
 
     /**
-     *  Set the enemy players data
+     * Set the enemy players data
      */
     private void setPlayerData(Object data) {
         if (!isUserDataSet) {
@@ -276,7 +285,7 @@ public class GameBoard {
     }
 
     /**
-     *  Check what game data has been sent and see if there are any hits
+     * Check what game data has been sent and see if there are any hits
      */
     private void handleGameData(int[] posToAttack) {
         if (posToAttack[0] == SHIP_HIT && posToAttack[3] != 0) {
@@ -285,8 +294,10 @@ public class GameBoard {
             disableChosenPowerUp(posToAttack[3]);
             SoundEffects.playBoomDynamite(this);
         } else if (posToAttack[0] == SHIP_HIT) { // The enemy sends back the int array with a 1 in first position to signal that he has been hit
+            yourCurrentScore++;
             enemyPositions[posToAttack[1]][posToAttack[2]].setBackground(Color.RED);
             isUserTurn = true;
+            setScoreLabel();
             setTurnLabel();
             SoundEffects.playBoom(this);
         } else if (posToAttack[0] == GAME_WON) {
@@ -297,13 +308,15 @@ public class GameBoard {
     }
 
     /**
-     *  Check if the position to attack sent by the enemy is an enabled
-     *  location on this players board
+     * Check if the position to attack sent by the enemy is an enabled
+     * location on this players board
      */
     private void checkForPlayerHit(int[] posToAttack) {
         // check if this player got hit
         if (playerPositions[posToAttack[1]][posToAttack[2]].isEnabled()) {
+            enemyCurrentScore++;
             updatePlayerBoard(posToAttack);
+            setScoreLabel();
         } else {
             // not hit, it's this players turn now
             isUserTurn = true;
@@ -324,8 +337,8 @@ public class GameBoard {
     }
 
     /**
-     *  This player got hit by the enemy, update this players field
-     *  Will also check if the enemy had any powerups enabled
+     * This player got hit by the enemy, update this players field
+     * Will also check if the enemy had any powerups enabled
      */
     private void updatePlayerBoard(int[] posToAttack) {
         playerPositions[posToAttack[1]][posToAttack[2]].setBackground(Color.BLACK);
@@ -335,8 +348,8 @@ public class GameBoard {
     }
 
     /**
-     *  This player got hit by the enemy
-     *  Check if the game is over and send the data back to the other player
+     * This player got hit by the enemy
+     * Check if the game is over and send the data back to the other player
      */
     private void checkForWinAndSendData(int[] posToAttack) {
         try {
@@ -380,23 +393,25 @@ public class GameBoard {
     }
 
     /**
-     *  This player got a hit on the other player with a powerup enabled
-     *  Set the enemys board to red and handle the powerup
+     * This player got a hit on the other player with a powerup enabled
+     * Set the enemys board to red and handle the powerup
      */
     private void updateHitWithPowerUp(int[] posToAttack) {
         System.out.println("Enemy got hit at pos " + posToAttack[1] + " and " + posToAttack[2]);
+        yourCurrentScore++;
         enemyPositions[posToAttack[1]][posToAttack[2]].setBackground(Color.RED);
         PowerUp.handlePowerUp(enemyPositions, posToAttack, Color.RED);
         isUserTurn = true;
         setTurnLabel();
+        setScoreLabel();
     }
 
     /**
-     *  Loop through all the positions on the player's board
-     *  and see if any are still enabled
-     *
-     *  If there are still positions enabled, the game is not done
-     *  If the player has no more enabled position, the game is over
+     * Loop through all the positions on the player's board
+     * and see if any are still enabled
+     * <p>
+     * If there are still positions enabled, the game is not done
+     * If the player has no more enabled position, the game is over
      */
     private boolean hasPlayerWin() {
         for (int i = 0; i < 10; i++) {
@@ -411,8 +426,8 @@ public class GameBoard {
     }
 
     /**
-     *  Check if this player needs to wait for the host to set their board first
-     *  before playing another game
+     * Check if this player needs to wait for the host to set their board first
+     * before playing another game
      */
     private void replayGameWait() {
         if (!isServer) {
@@ -481,11 +496,15 @@ public class GameBoard {
         replayGameButton.setEnabled(false);
         replayGameButton.setText("Replay Game?");
         mainPanel.add(replayGameButton, new GridConstraints(3, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        enemyScore = new JLabel();
+        enemyScore.setText("Score");
+        mainPanel.add(enemyScore, new GridConstraints(0, 2, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        yourScore = new JLabel();
+        yourScore.setText("Score");
+        mainPanel.add(yourScore, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
     }
 
     /**
-     * Auto-generated GUI stuff
-     *
      * @noinspection ALL
      */
     private Font $$$getFont$$$(String fontName, int style, int size, Font currentFont) {
@@ -508,8 +527,6 @@ public class GameBoard {
     }
 
     /**
-     * Auto-generated GUI stuff
-     *
      * @noinspection ALL
      */
     public JComponent $$$getRootComponent$$$() {
@@ -517,8 +534,8 @@ public class GameBoard {
     }
 
     /**
-     *  Private class that handles all game buttons for the main BattleShip Window
-     *  Whenever a gamegrid button is clicked, this listener is called
+     * Private class that handles all game buttons for the main BattleShip Window
+     * Whenever a gamegrid button is clicked, this listener is called
      */
     private class ButtonHandler implements ActionListener {
 
@@ -591,7 +608,7 @@ public class GameBoard {
 
     /**
      * Private class to handle power ups
-     *
+     * <p>
      * Will be called everytime one of the buttons are clicked,
      * but will only activate if the player gets a hit.
      * Only one of each powerup can be used per game
