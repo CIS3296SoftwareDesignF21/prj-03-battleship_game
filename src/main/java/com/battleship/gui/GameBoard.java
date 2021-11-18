@@ -351,12 +351,12 @@ public class GameBoard {
     private void checkForWinAndSendData(int[] posToAttack) {
         try {
             if (hasPlayerWin()) {
-                connection.send(new int[] {GAME_WON, posToAttack[1], posToAttack[2], 0});
+                connection.send(new int[]{GAME_WON, posToAttack[1], posToAttack[2], 0});
                 JOptionPane.showMessageDialog(frame, "You lost!", "Bad news", JOptionPane.INFORMATION_MESSAGE);
                 replayGameButton.setEnabled(true);
                 replayGameButton.setVisible(true);
             } else {
-                connection.send(new int[] {SHIP_HIT, posToAttack[1], posToAttack[2], posToAttack[3]});
+                connection.send(new int[]{SHIP_HIT, posToAttack[1], posToAttack[2], posToAttack[3]});
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -580,7 +580,7 @@ public class GameBoard {
                         System.out.println("Chosen position to attack: " + i + ", " + j);
                         enemyPositions[i][j].setBackground(Color.ORANGE);
                         try {
-                            connection.send(new int[] {PLAYING, i, j, powerUpVal});
+                            connection.send(new int[]{PLAYING, i, j, powerUpVal});
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
