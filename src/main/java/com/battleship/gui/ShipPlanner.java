@@ -15,8 +15,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.util.Locale;
-import java.util.Objects;
+import java.util.*;
 
 
 /*
@@ -42,11 +41,15 @@ public class ShipPlanner implements ActionListener {
     private final int port;
     private final String ip;
 
+    //Button was added to generate the random ship placement
+    private JButton randomPlacement;
+
     public ShipPlanner(boolean isServer, int port, String ip) {
         frame = new JFrame("Place your ships");
         $$$setupUI$$$();
         buttonOk.addActionListener(this);
         buttonReset.addActionListener(this);
+        randomPlacement.addActionListener(this);
         this.setButtons();
         frame.add(panel, BorderLayout.CENTER);
         frame.setContentPane(panel);
@@ -80,17 +83,16 @@ public class ShipPlanner implements ActionListener {
             }
         }
     }
-
     @Override
     public void actionPerformed(ActionEvent e) {
         Object source = e.getSource();
         if (source == buttonOk) {
             SwingUtilities.invokeLater(() -> {
-                GameBoard gb = new GameBoard();
+                GameBoard gb = new GameBoard(port, ip, isServer);
                 if (isServer) {
-                    gb.createServer(port);
+                    gb.createServer();
                 } else {
-                    gb.createClient(ip, port);
+                    gb.createClient();
                 }
             });
             frame.dispose();
@@ -99,6 +101,61 @@ public class ShipPlanner implements ActionListener {
         else if (source == buttonReset) {
             board.field.clear(); // resets hashmap
             resetPlanner();
+            randomPlacement.setEnabled(true);
+        } else if (source == randomPlacement) {
+            // using a map to store number of ships and ship length
+            // Keys: Number of Ships, Values: Ship Length
+            Map<Integer, Integer> map = new HashMap<>();
+            String dummyStringForBoard;  // needed for making unique board keys
+            int index = 0;               // needed for making unique board keys
+            // add ship data to the map, 10 ships total
+            map.put(1, 4);
+            map.put(2, 3);
+            map.put(3, 2);
+            map.put(4, 1);
+            // loop through the map
+            for (int k : map.keySet()) {
+                for (int i = 0; i < k; i++) {
+                    boolean check = false;
+                    int shipLength = map.get(k);
+                    while (!check) {
+                        Random R = new Random();
+                        Random C = new Random();
+                        int randomRow = Math.abs(R.nextInt() % 10);
+                        int randomColumn = Math.abs(C.nextInt() % 10);
+                        int xVal = randomColumn + shipLength;
+                        int yVal = randomRow + shipLength;
+                        try {
+                            // make a unique string for the board's map
+                            // we don't care about the actual key, its only needed so that the
+                            // next step in the game, loading the actual gameboard, can work properly
+                            dummyStringForBoard = "battleShipGang" + index++;
+                            //checking for Horizontal placement
+                            if (positions[randomRow][randomColumn].isEnabled() && positions[randomRow][xVal].isEnabled()) {
+                                board.addShip(new Ship(randomRow, randomColumn, randomRow, randomColumn + shipLength), dummyStringForBoard);
+                                for (int l = randomColumn; l < randomColumn + shipLength; l++) {
+                                    positions[randomRow][l].setBackground(Color.BLUE);
+                                    positions[randomRow][l].setEnabled(false);
+                                }
+                                check = true;
+                            }
+                            //checking for Vertical placement
+                            else if (positions[randomRow][randomColumn].isEnabled() && positions[yVal][randomColumn].isEnabled()) {
+                                board.addShip(new Ship(randomRow, randomColumn, randomRow, randomRow + shipLength), dummyStringForBoard);
+                                for (int l = randomRow; l < randomRow + shipLength; l++) {
+                                    positions[l][randomColumn].setBackground(Color.BLUE);
+                                    positions[l][randomColumn].setEnabled(false);
+                                }
+                                check = true;
+                            }
+                        } catch (IndexOutOfBoundsException ex) {
+                            // do nothing, just go back in loop
+                        }
+                    }
+                    randomPlacement.setEnabled(false);
+                    buttonOk.setEnabled(true);
+                }
+            }
         }
     }
 
@@ -140,12 +197,12 @@ public class ShipPlanner implements ActionListener {
         panel.add(panel1, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         panel1.add(gridPanel, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, new Dimension(350, 350), new Dimension(350, 350), new Dimension(350, 350), 0, false));
         shipPanel = new JPanel();
-        shipPanel.setLayout(new GridLayoutManager(7, 1, new Insets(0, 0, 0, 0), -1, -1));
+        shipPanel.setLayout(new GridLayoutManager(8, 1, new Insets(0, 0, 0, 0), -1, -1));
         panel.add(shipPanel, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         buttonOk = new JButton();
         buttonOk.setEnabled(false);
         buttonOk.setText("OK");
-        shipPanel.add(buttonOk, new GridConstraints(6, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        shipPanel.add(buttonOk, new GridConstraints(7, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         comboBoxShipSelector = new JComboBox();
         final DefaultComboBoxModel defaultComboBoxModel1 = new DefaultComboBoxModel();
         defaultComboBoxModel1.addElement("4 unit ship");
@@ -173,6 +230,9 @@ public class ShipPlanner implements ActionListener {
         shipPanel.add(rightClickLabelHelper, new GridConstraints(3, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         final Spacer spacer2 = new Spacer();
         shipPanel.add(spacer2, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
+        randomPlacement = new JButton();
+        randomPlacement.setText("Random Placement");
+        shipPanel.add(randomPlacement, new GridConstraints(6, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
     }
 
     /**
@@ -228,6 +288,10 @@ public class ShipPlanner implements ActionListener {
                                     board.addShip(new Ship(i, j, i, j + shipLen), (String) comboBoxShipSelector.getSelectedItem());
                                     comboBoxShipSelector.removeItem(comboBoxShipSelector.getSelectedItem());
                                 }
+                            } else if (i + shipLen <= 10 && isValidPosition(i, j, i + shipLen - 1, j)) {
+                                for (int l = i; l < i + shipLen; l++) {
+                                    this.disableSurrounding(l, j);
+                                    positions[l][j].setBackground(Color.BLUE);
                             } else {
                                 if (i + shipLen <= 10 && isValidPosition(i, j, i + shipLen - 1, j)) {
                                     for (int l = i; l < i + shipLen; l++) {
@@ -238,10 +302,14 @@ public class ShipPlanner implements ActionListener {
                                     board.addShip(new Ship(i, j, i + shipLen, j), (String) comboBoxShipSelector.getSelectedItem());
                                     comboBoxShipSelector.removeItem(comboBoxShipSelector.getSelectedItem());
                                 }
+                                board.addShip(new Ship(i, j, i + shipLen, j), (String) comboBoxShipSelector.getSelectedItem());
+                                comboBoxShipSelector.removeItem(comboBoxShipSelector.getSelectedItem());
                             }
+
                             if (comboBoxItemCount == 1) {
                                 buttonOk.setEnabled(true);
                             }
+
                         }
                     }
                 }

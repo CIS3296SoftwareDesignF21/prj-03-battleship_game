@@ -6,7 +6,6 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
-import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.function.Consumer;
@@ -50,6 +49,8 @@ public abstract class NetworkConnection {
      */
     public void closeConnection() throws Exception {
         connectionThread.socket.close();
+        if (isServer())
+            connectionThread.server.close();
     }
 
     /**
@@ -73,12 +74,13 @@ public abstract class NetworkConnection {
     private class ConnectionThread extends Thread {
 
         private Socket socket;
+        private ServerSocket server;
         private ObjectOutputStream out;
         private ObjectInputStream in;
         private Serializable data;
 
         private void setFields() throws IOException {
-            ServerSocket server = isServer() ? new ServerSocket(getPort()) : null;
+            this.server = isServer() ? new ServerSocket(getPort()) : null;
             Socket socket = isServer() ? server.accept() : new Socket(getIP(), getPort());
             if (isServer()) {
                 try {
