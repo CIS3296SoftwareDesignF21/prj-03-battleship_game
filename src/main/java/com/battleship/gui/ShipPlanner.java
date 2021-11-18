@@ -33,11 +33,11 @@ public class ShipPlanner implements ActionListener {
     private JButton buttonReset;
     private JLabel leftClickLabelHelper;
     private JLabel rightClickLabelHelper;
-    private JTextArea messages;
     private final JButton[][] positions = new JButton[10][10];
     private final ButtonHandler buttonHandler = new ButtonHandler();
     public static final Board board = new Board();
     private final boolean isServer;
+    private boolean isMac;
     private final int port;
     private final String ip;
 
@@ -57,6 +57,7 @@ public class ShipPlanner implements ActionListener {
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
+        this.isMac = System.getProperty("os.name", "").toLowerCase(Locale.ENGLISH).startsWith("mac");
         this.isServer = isServer;
         this.port = port;
         this.ip = ip;
@@ -174,9 +175,9 @@ public class ShipPlanner implements ActionListener {
         comboBoxShipSelector.addItem("1 Unit Ship (4)");
         for (int i = 0; i < 10; i++) {
             for (int j = 0; j < 10; j++) {
+                if (isMac) positions[i][j].setOpaque(false);
                 positions[i][j].setEnabled(true);
                 positions[i][j].setBackground(Color.LIGHT_GRAY);
-                positions[i][j].setOpaque(false);
             }
         }
         buttonOk.setEnabled(false);
@@ -253,7 +254,10 @@ public class ShipPlanner implements ActionListener {
                 resultName = currentFont.getName();
             }
         }
-        return new Font(resultName, style >= 0 ? style : currentFont.getStyle(), size >= 0 ? size : currentFont.getSize());
+        Font font = new Font(resultName, style >= 0 ? style : currentFont.getStyle(), size >= 0 ? size : currentFont.getSize());
+        boolean isMac = System.getProperty("os.name", "").toLowerCase(Locale.ENGLISH).startsWith("mac");
+        Font fontWithFallback = isMac ? new Font(font.getFamily(), font.getStyle(), font.getSize()) : new StyleContext().getFont(font.getFamily(), font.getStyle(), font.getSize());
+        return fontWithFallback instanceof FontUIResource ? fontWithFallback : new FontUIResource(fontWithFallback);
     }
 
     /**
@@ -267,7 +271,6 @@ public class ShipPlanner implements ActionListener {
         @Override
         public void mouseClicked(MouseEvent e) {
             Object source = e.getSource();
-            boolean isMac = System.getProperty("os.name", "").toLowerCase(Locale.ENGLISH).startsWith("mac");
             // TODO: refactor
             // this can be a way better alg.
             for (int i = 0; i < 10; i++) {
@@ -290,18 +293,8 @@ public class ShipPlanner implements ActionListener {
                             } else if (i + shipLen <= 10 && isValidPosition(i, j, i + shipLen - 1, j)) {
                                 for (int l = i; l < i + shipLen; l++) {
                                     this.disableSurrounding(l, j);
-                                    if (isMac == true) positions[l][j].setOpaque(true);
+                                    if (isMac == true) positions[i][l].setOpaque(true);
                                     positions[l][j].setBackground(Color.BLUE);
-                                }
-                            } else {
-                                if (i + shipLen <= 10 && isValidPosition(i, j, i + shipLen - 1, j)) {
-                                    for (int l = i; l < i + shipLen; l++) {
-                                        this.disableSurrounding(l, j);
-                                        if (isMac == true) positions[l][j].setOpaque(true);
-                                        positions[l][j].setBackground(Color.BLUE);
-                                    }
-                                    board.addShip(new Ship(i, j, i + shipLen, j), (String) comboBoxShipSelector.getSelectedItem());
-                                    comboBoxShipSelector.removeItem(comboBoxShipSelector.getSelectedItem());
                                 }
                                 board.addShip(new Ship(i, j, i + shipLen, j), (String) comboBoxShipSelector.getSelectedItem());
                                 comboBoxShipSelector.removeItem(comboBoxShipSelector.getSelectedItem());
@@ -334,6 +327,7 @@ public class ShipPlanner implements ActionListener {
             for (int i = x - 1; i <= x + 1; i++) {
                 for (int j = y - 1; j <= y + 1; j++) {
                     try {
+                        // maybe need an isMac check here
                         positions[i][j].setEnabled(false);
                         if (i != x && j != y) { // Not working properly
                             positions[i][j].setBackground(new Color(175, 175, 175));
