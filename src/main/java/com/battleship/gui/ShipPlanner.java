@@ -292,6 +292,7 @@ public class ShipPlanner implements ActionListener {
                                 for (int l = i; l < i + shipLen; l++) {
                                     this.disableSurrounding(l, j);
                                     positions[l][j].setBackground(Color.BLUE);
+                                }
                             } else {
                                 if (i + shipLen <= 10 && isValidPosition(i, j, i + shipLen - 1, j)) {
                                     for (int l = i; l < i + shipLen; l++) {
