@@ -14,5 +14,5 @@
 - Currently working on getting the server to wait for the client to join the game before placing ships
 - Assisting Juan-Carlo with Random Ship Generator
 
-#Felix C
+# Felix C
 - Currently working on bug fixing
