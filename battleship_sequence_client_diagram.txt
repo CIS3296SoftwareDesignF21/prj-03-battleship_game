@@ -1,0 +1,50 @@
+title BattleShip Sequence Diagram - Client Player 
+
+participant Application
+participant Window
+participant ClientDialog
+participant ShipPlanner
+participant GameBoard
+participant NetworkConnection
+
+entryspacing 0.5
+
+Application->Window:invokeLater(Window::new)
+activate Application
+activate Window
+Window->ClientDialog:invokeLater(ClientDialog::new)
+activate ClientDialog
+ClientDialog->ShipPlanner:invokeLater(() -> new ShipPlanner())
+activate ShipPlanner
+ShipPlanner->GameBoard:invokeLater(() -> new GameBoard())
+activate GameBoard
+GameBoard->NetworkConnection:send()
+activate NetworkConnection
+NetworkConnection->GameBoard:onReceiveCallback.accept()
+GameBoard->GameBoard: replay()
+GameBoard->ShipPlanner: replay() is true
+
+deactivate NetworkConnection
+deactivate GameBoard
+deactivate Application
+deactivate Window
+deactivate ClientDialog
+deactivate ShipPlanner
+
+note left of Application: This is the entry point of the BattleShip Game.\nThe main method in this class will use Java SwingUtilities\nto invoke a new Window class which uses the GUI.\n
+
+note over GameBoard:This is the main window for the BattleShip Game.\nThe player will be displayed a 10x10 matrix filled\nwith buttons that they will use to attack the enemy\nboard.Whenever a player clicks on the enemy board,\nit will use the NetworkConnection thred to send the \ngame data to the other player. 
+
+note over Window: This is the first GUI that the user is prompted with.\nThere are four buttons that are displayed, Host Game,\nJoin Game, Settings, and Exit. Each of these buttons\nhave an event listener which they are binded to. The \nevent listeners are triggered whenever a button is clicked\nand the correct logic is then applied.\n\nThis seqeuence diagram illustrates when a player either hosts\nor joins a game. 
+
+note over ClientDialog:A GUI prompts the user with a two text boxes,\nOne for the IP address and the port of host player\nto connect to. There is also an OK button that will \ncreate the client with the specified parameters.
+
+note over NetworkConnection: This class gets run in a seperate thread\nthat will accept the data sent from the other player.\nIt then calls a callback method to handle the data.
+
+note over ShipPlanner:This GUI window features a 10x10 matrix that is \nmade up of buttons. The user is able to set their ships on the\nboard by pressing a specific button. Once all the ships have \nbeen placed on their board, the player is ready to begin the game. 
+
+
+
+
+
+
