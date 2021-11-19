@@ -8,12 +8,15 @@ import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Consumer;
 
 public abstract class NetworkConnection {
 
     private final ConnectionThread connectionThread = new ConnectionThread();
     private final Consumer<Serializable> onReceiveCallback;
+    public boolean clientConnected = false;
+    public ReentrantLock lock = new ReentrantLock();
 
     /**
      * Constructor of the class
@@ -80,14 +83,18 @@ public abstract class NetworkConnection {
         private Serializable data;
 
         private void setFields() throws IOException {
+            Socket socket;
             this.server = isServer() ? new ServerSocket(getPort()) : null;
-            Socket socket = isServer() ? server.accept() : new Socket(getIP(), getPort());
             if (isServer()) {
-                try {
-                    System.out.println("My IP is " + IpChecker.getIp());
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+                // wait for the client to connect
+                System.out.println("Waiting for Client to Connect....");
+                socket = server.accept();
+                lock.lock();
+                clientConnected = true;
+                lock.unlock();
+            }
+            else {
+                socket = new Socket(getIP(), getPort());
             }
             this.socket = socket;
             this.out =  new ObjectOutputStream(socket.getOutputStream());
@@ -100,8 +107,8 @@ public abstract class NetworkConnection {
             try  {
                 setFields();
                 while (true) {
-                        data = (Serializable)in.readObject();
-                        onReceiveCallback.accept(data);
+                    data = (Serializable)in.readObject();
+                    onReceiveCallback.accept(data);
                 }
             } catch (Exception e) {
                 onReceiveCallback.accept("Connection closed." + e.toString() + " Cause " + e.getCause());
