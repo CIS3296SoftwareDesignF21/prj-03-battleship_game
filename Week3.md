@@ -14,3 +14,7 @@
 # Juan-Carlo V. M.
 - Finally got the random placement button to work
 - Helped with ensuring that the random placement buttons worked for both windows and mac.
+
+# Felix Chen
+- Worked on "How to Play" button in the menu
+- Fixed a visual bug when running the game on Mac
