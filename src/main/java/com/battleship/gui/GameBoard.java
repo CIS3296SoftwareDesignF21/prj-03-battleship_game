@@ -17,6 +17,7 @@ import javax.swing.text.StyleContext;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Calendar;
 import java.util.Locale;
 
 
@@ -52,6 +53,7 @@ public class GameBoard {
     private String enemyName = "Enemy Player";
     private JLabel enemyScore;
     private JLabel yourScore;
+    private JOptionPane optionPane;
     private int yourCurrentScore = 0;
     private int enemyCurrentScore = 0;
     private boolean isUserDataSet = false;
@@ -178,8 +180,35 @@ public class GameBoard {
         connection = new Server(data -> SwingUtilities.invokeLater(() -> handleData(data)), port);
         try {
             connection.startConnection();
+            waitForClientConnection();
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    private void waitForClientConnection() {
+        // wait for the client to connect
+        // should display a window or something similar
+        // to show that we're waiting
+        JOptionPane optionPane = new JOptionPane();
+        JLabel label = new JLabel("Waiting for client to connect");
+        label.setHorizontalAlignment(JLabel.CENTER);
+        while (true) {
+            JOptionPane.showMessageDialog(null, label, "Please wait...", JOptionPane.PLAIN_MESSAGE);
+            boolean val;
+            connection.lock.lock();
+            try {
+                val = connection.clientConnected;
+                connection.lock.unlock();
+                // once this bool turns true, a client has connected
+                if (val) {
+                    JLabel label2 = new JLabel("Waiting for client to connect");
+                    JOptionPane.showMessageDialog(null, label2, "Connection success!", JOptionPane.PLAIN_MESSAGE);
+                    return;
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 
