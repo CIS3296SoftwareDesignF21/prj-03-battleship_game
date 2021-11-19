@@ -152,7 +152,7 @@ Raymond Scott is a 34 years old port crane operator who works at the port of Phi
 [Click Here](https://github.com/CIS3296SoftwareDesignF21/prj-03-battleship_game/blob/main/Week3.md)
 
 ## Class Diagram
-![BattleshipUML-Page-1 drawio (1)](https://user-images.githubusercontent.com/47299145/142564180-52e90d5e-b324-4f4c-8c3c-de45eed01415.png)
+![BattleshipUML-Page-1 drawio (2)](https://user-images.githubusercontent.com/47299145/142631684-8e71e843-a1a0-4976-8560-ddc3861b15ce.png)
 
 ## Sequence Diagram 
 ![BattleshipUML-Sequence-Diagram](https://github.com/CIS3296SoftwareDesignF21/prj-03-battleship_game/blob/main/battleship_sequence_diagram_v2.png)
