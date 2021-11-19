@@ -136,6 +136,7 @@ public class ShipPlanner implements ActionListener {
                             if (positions[randomRow][randomColumn].isEnabled() && positions[randomRow][xVal].isEnabled()) {
                                 board.addShip(new Ship(randomRow, randomColumn, randomRow, randomColumn + shipLength), dummyStringForBoard);
                                 for (int l = randomColumn; l < randomColumn + shipLength; l++) {
+                                    if (isMac) positions[randomRow][l].setOpaque(true);
                                     positions[randomRow][l].setBackground(Color.BLUE);
                                     positions[randomRow][l].setEnabled(false);
                                 }
@@ -145,6 +146,7 @@ public class ShipPlanner implements ActionListener {
                             else if (positions[randomRow][randomColumn].isEnabled() && positions[yVal][randomColumn].isEnabled()) {
                                 board.addShip(new Ship(randomRow, randomColumn, randomRow, randomRow + shipLength), dummyStringForBoard);
                                 for (int l = randomRow; l < randomRow + shipLength; l++) {
+                                    if (isMac) positions[l][randomColumn].setOpaque(true);
                                     positions[l][randomColumn].setBackground(Color.BLUE);
                                     positions[l][randomColumn].setEnabled(false);
                                 }
