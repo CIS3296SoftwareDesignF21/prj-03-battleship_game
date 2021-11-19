@@ -66,11 +66,13 @@ Players will also have the ability to play solo against the computer if they do 
 ## How to Run
 
 ### *From JAR file*
++ The java version on your machine must be 14 or greater for this game to work. 
 + Download the BattleShip.jar file from the releases tab.
-+ Once downloaded, navigate to where the file is saved and double click it to run.
++ Navigate to where the file is saved and double click it to run.
 + When the game menu is displayed, click "host game" to begin a game.
-+ Then to join a game, you can either use the same BattleShip instance, or run another instance of the BattleShip and select "join game".
-+ The correct IP and port will have to be supplied. (Online Only)
++ Then to join a game, you you must run another instance of the BattleShip game and select "join game".
++ If you are connecting from a different machine, you must allow java programs through your firewall.
++ The correct IP and port will have to be supplied to join the game.
 
 ### *From your IDE*
 + Fire up your favorite ide and make sure you have java 14 installed on your machine.
