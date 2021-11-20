@@ -89,75 +89,107 @@ public class ShipPlanner implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         Object source = e.getSource();
         if (source == buttonOk) {
-            SwingUtilities.invokeLater(() -> {
-                GameBoard gb = new GameBoard(port, ip, isServer);
-                if (isServer) {
-                    gb.createServer();
-                } else {
-                    gb.createClient();
-                }
-            });
-            frame.dispose();
+            prepareGameBoard();
         }
-        // To reset the initial config of the field. This deletes all the previously added ships
         else if (source == buttonReset) {
             board.field.clear(); // resets hashmap
             resetPlanner();
             randomPlacement.setEnabled(true);
         } else if (source == randomPlacement) {
-            // using a map to store number of ships and ship length
-            // Keys: Number of Ships, Values: Ship Length
-            Map<Integer, Integer> map = new HashMap<>();
-            String dummyStringForBoard;  // needed for making unique board keys
-            int index = 0;               // needed for making unique board keys
-            // add ship data to the map, 10 ships total
-            map.put(1, 4);
-            map.put(2, 3);
-            map.put(3, 2);
-            map.put(4, 1);
-            // loop through the map
-            for (int k : map.keySet()) {
-                for (int i = 0; i < k; i++) {
-                    boolean check = false;
-                    int shipLength = map.get(k);
-                    while (!check) {
-                        Random R = new Random();
-                        Random C = new Random();
-                        int randomRow = Math.abs(R.nextInt() % 10);
-                        int randomColumn = Math.abs(C.nextInt() % 10);
-                        int xVal = randomColumn + shipLength;
-                        int yVal = randomRow + shipLength;
-                        try {
-                            // make a unique string for the board's map
-                            // we don't care about the actual key, its only needed so that the
-                            // next step in the game, loading the actual gameboard, can work properly
-                            dummyStringForBoard = "battleShipGang" + index++;
-                            //checking for Horizontal placement
-                            if (positions[randomRow][randomColumn].isEnabled() && positions[randomRow][xVal].isEnabled()) {
-                                board.addShip(new Ship(randomRow, randomColumn, randomRow, randomColumn + shipLength), dummyStringForBoard);
-                                for (int l = randomColumn; l < randomColumn + shipLength; l++) {
-                                    if (isMac) positions[randomRow][l].setOpaque(true);
-                                    positions[randomRow][l].setBackground(Color.BLUE);
-                                    positions[randomRow][l].setEnabled(false);
-                                }
-                                check = true;
+            setRandomShips();
+        }
+    }
+
+    /**
+     * Prepare the next step of the game, the GameBoard
+     * Will invoke a new GameBoard GUI object after set up
+     */
+    private void prepareGameBoard() {
+        SwingUtilities.invokeLater(() -> {
+            GameBoard gb = new GameBoard(port, ip, isServer);
+            if (isServer) {
+                gb.createServer();
+            } else {
+                gb.createClient();
+            }
+        });
+        frame.dispose();
+    }
+
+    private void setRandomShips() {
+        // using a map to store number of ships and ship length
+        // Keys: Number of Ships, Values: Ship Length
+        Map<Integer, Integer> map = new HashMap<>();
+        String dummyStringForBoard;  // needed for making unique board keys
+        int index = 0;               // needed for making unique board keys
+        // add ship data to the map, 10 ships total
+        map.put(1, 4);
+        map.put(2, 3);
+        map.put(3, 2);
+        map.put(4, 1);
+        // loop through the map
+        for (int k : map.keySet()) {
+            for (int i = 0; i < k; i++) {
+                boolean check = false;
+                int shipLength = map.get(k);
+                while (!check) {
+                    Random R = new Random();
+                    Random C = new Random();
+                    int randomRow = Math.abs(R.nextInt() % 10);
+                    int randomColumn = Math.abs(C.nextInt() % 10);
+                    int xVal = randomColumn + shipLength;
+                    int yVal = randomRow + shipLength;
+                    try {
+                        // make a unique string for the board's map
+                        // we don't care about the actual key, its only needed so that the
+                        // next step in the game, loading the actual gameboard, can work properly
+                        dummyStringForBoard = "battleShipGang" + index++;
+                        //checking for Horizontal placement
+                        if (positions[randomRow][randomColumn].isEnabled() && positions[randomRow][xVal].isEnabled()) {
+                            board.addShip(new Ship(randomRow, randomColumn, randomRow, randomColumn + shipLength), dummyStringForBoard);
+                            for (int l = randomColumn; l < randomColumn + shipLength; l++) {
+                                disableSurrounding(randomRow, l);
+                                if (isMac) positions[randomRow][l].setOpaque(true);
+                                positions[randomRow][l].setBackground(Color.BLUE);
+                                positions[randomRow][l].setEnabled(false);
                             }
-                            //checking for Vertical placement
-                            else if (positions[randomRow][randomColumn].isEnabled() && positions[yVal][randomColumn].isEnabled()) {
-                                board.addShip(new Ship(randomRow, randomColumn, randomRow, randomRow + shipLength), dummyStringForBoard);
-                                for (int l = randomRow; l < randomRow + shipLength; l++) {
-                                    if (isMac) positions[l][randomColumn].setOpaque(true);
-                                    positions[l][randomColumn].setBackground(Color.BLUE);
-                                    positions[l][randomColumn].setEnabled(false);
-                                }
-                                check = true;
-                            }
-                        } catch (IndexOutOfBoundsException ex) {
-                            // do nothing, just go back in loop
+                            check = true;
                         }
+                        //checking for Vertical placement
+                        else if (positions[randomRow][randomColumn].isEnabled() && positions[yVal][randomColumn].isEnabled()) {
+                            board.addShip(new Ship(randomRow, randomColumn, randomRow, randomRow + shipLength), dummyStringForBoard);
+                            for (int l = randomRow; l < randomRow + shipLength; l++) {
+                                disableSurrounding(l, randomColumn);
+                                if (isMac) positions[l][randomColumn].setOpaque(true);
+                                positions[l][randomColumn].setBackground(Color.BLUE);
+                                positions[l][randomColumn].setEnabled(false);
+                            }
+                            check = true;
+                        }
+                    } catch (IndexOutOfBoundsException ex) {
+                        // do nothing, just go back in loop
                     }
-                    randomPlacement.setEnabled(false);
-                    buttonOk.setEnabled(true);
+                }
+            }
+        }
+        comboBoxShipSelector.removeAllItems();
+        randomPlacement.setEnabled(false);
+        buttonOk.setEnabled(true);
+    }
+
+    /**
+     *  Disable surrounding squares when a player sets a ship
+     */
+    private void disableSurrounding(int x, int y) {
+        for (int i = x - 1; i <= x + 1; i++) {
+            for (int j = y - 1; j <= y + 1; j++) {
+                try {
+                    positions[i][j].setEnabled(false);
+                    if (i != x && j != y) {
+                        positions[i][j].setBackground(new Color(175, 175, 175));
+                    }
+                } catch (IndexOutOfBoundsException ex) {
+                    // Nothing to do but maybe there is another way to do this
                 }
             }
         }
@@ -256,7 +288,10 @@ public class ShipPlanner implements ActionListener {
                 resultName = currentFont.getName();
             }
         }
-        return new Font(resultName, style >= 0 ? style : currentFont.getStyle(), size >= 0 ? size : currentFont.getSize());
+        Font font = new Font(resultName, style >= 0 ? style : currentFont.getStyle(), size >= 0 ? size : currentFont.getSize());
+        boolean isMac = System.getProperty("os.name", "").toLowerCase(Locale.ENGLISH).startsWith("mac");
+        Font fontWithFallback = isMac ? new Font(font.getFamily(), font.getStyle(), font.getSize()) : new StyleContext().getFont(font.getFamily(), font.getStyle(), font.getSize());
+        return fontWithFallback instanceof FontUIResource ? fontWithFallback : new FontUIResource(fontWithFallback);
     }
 
     /**
@@ -267,6 +302,11 @@ public class ShipPlanner implements ActionListener {
     }
 
     private class ButtonHandler implements MouseListener {
+
+        /**
+         *  EventHandler that will be called everytime a user
+         *  clicks the mouse
+         */
         @Override
         public void mouseClicked(MouseEvent e) {
             Object source = e.getSource();
@@ -276,36 +316,59 @@ public class ShipPlanner implements ActionListener {
                 for (int j = 0; j < 10; j++) {
                     // check where the user clicked and add the ship
                     if (source == positions[i][j]) {
-                        int comboBoxItemCount = comboBoxShipSelector.getItemCount();
-                        if (comboBoxItemCount > 0) {
-                            int shipLen = Integer.parseInt(((String) Objects.requireNonNull(comboBoxShipSelector.getSelectedItem())).substring(0, 1));
-                            if (SwingUtilities.isRightMouseButton(e)) {
-                                if (j + shipLen <= 10 && isValidPosition(i, j, i, j + shipLen - 1)) {
-                                    for (int l = j; l < j + shipLen; l++) {
-                                        this.disableSurrounding(i, l);
-                                        if (isMac == true) positions[i][l].setOpaque(true);
-                                        positions[i][l].setBackground(Color.BLUE);
-                                    }
-                                    board.addShip(new Ship(i, j, i, j + shipLen), (String) comboBoxShipSelector.getSelectedItem());
-                                    comboBoxShipSelector.removeItem(comboBoxShipSelector.getSelectedItem());
-                                }
-                            } else if (i + shipLen <= 10 && isValidPosition(i, j, i + shipLen - 1, j)) {
-                                for (int l = i; l < i + shipLen; l++) {
-                                    this.disableSurrounding(l, j);
-                                    if (isMac == true) positions[l][j].setOpaque(true);
-                                    positions[l][j].setBackground(Color.BLUE);
-                                }
-                                board.addShip(new Ship(i, j, i + shipLen, j), (String) comboBoxShipSelector.getSelectedItem());
-                                comboBoxShipSelector.removeItem(comboBoxShipSelector.getSelectedItem());
-                            }
-
-                            if (comboBoxItemCount == 1) {
-                                buttonOk.setEnabled(true);
-                            }
-
-                        }
+                        setShipsOnBoard(i, j, e);
                     }
                 }
+            }
+        }
+
+        /**
+         *  The user clicked a grid
+         *  Figure out which ship to place on the board
+         */
+        private void setShipsOnBoard(int i, int j, MouseEvent e) {
+            int comboBoxItemCount = comboBoxShipSelector.getItemCount();
+            if (comboBoxItemCount > 0) {
+                int shipLen = Integer.parseInt(((String) Objects.requireNonNull(comboBoxShipSelector.getSelectedItem())).substring(0, 1));
+                if (SwingUtilities.isRightMouseButton(e)) {
+                    setHorizontalShip(i, j, shipLen);
+                } else if (i + shipLen <= 10 && isValidPosition(i, j, i + shipLen - 1, j)) {
+                    setVerticalShip(i, j, shipLen);
+                }
+                if (comboBoxItemCount == 1) {
+                    // all ships have been placed on board
+                    buttonOk.setEnabled(true);
+                }
+            }
+        }
+
+        /**
+         *  The user left-clicked the mouse on a grid
+         *  Set a vertical ship
+         */
+        private void setVerticalShip(int i, int j, int shipLen) {
+            for (int l = i; l < i + shipLen; l++) {
+                disableSurrounding(l, j);
+                if (isMac == true) positions[l][j].setOpaque(true);
+                positions[l][j].setBackground(Color.BLUE);
+            }
+            board.addShip(new Ship(i, j, i + shipLen, j), (String) comboBoxShipSelector.getSelectedItem());
+            comboBoxShipSelector.removeItem(comboBoxShipSelector.getSelectedItem());
+        }
+
+        /**
+         *  The user right-clicked the mouse on a grid
+         *  Set a horizontal ship
+         */
+        private void setHorizontalShip(int i, int j, int shipLen) {
+            if (j + shipLen <= 10 && isValidPosition(i, j, i, j + shipLen - 1)) {
+                for (int l = j; l < j + shipLen; l++) {
+                    disableSurrounding(i, l);
+                    if (isMac == true) positions[i][l].setOpaque(true);
+                    positions[i][l].setBackground(Color.BLUE);
+                }
+                board.addShip(new Ship(i, j, i, j + shipLen), (String) comboBoxShipSelector.getSelectedItem());
+                comboBoxShipSelector.removeItem(comboBoxShipSelector.getSelectedItem());
             }
         }
 
@@ -320,22 +383,6 @@ public class ShipPlanner implements ActionListener {
          */
         private boolean isValidPosition(int xHead, int yHead, int xTail, int yTail) {
             return positions[xHead][yHead].isEnabled() && positions[xTail][yTail].isEnabled();
-        }
-
-        private void disableSurrounding(int x, int y) {
-            for (int i = x - 1; i <= x + 1; i++) {
-                for (int j = y - 1; j <= y + 1; j++) {
-                    try {
-                        // maybe need an isMac check here
-                        positions[i][j].setEnabled(false);
-                        if (i != x && j != y) { // Not working properly
-                            positions[i][j].setBackground(new Color(175, 175, 175));
-                        }
-                    } catch (IndexOutOfBoundsException ex) {
-                        // Nothing to do but maybe there is another way to do this
-                    }
-                }
-            }
         }
 
         @Override
