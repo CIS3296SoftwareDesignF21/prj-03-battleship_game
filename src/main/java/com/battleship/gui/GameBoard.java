@@ -54,6 +54,7 @@ public class GameBoard {
     private String enemyName = "Enemy Player";
     private JLabel enemyScore;
     private JLabel yourScore;
+    private JLabel yourPreviousScore;
     private JOptionPane optionPane;
     private int yourCurrentScore = 0;
     private int enemyCurrentScore = 0;
@@ -332,6 +333,7 @@ public class GameBoard {
             SoundEffects.playBoom(this);
         } else if (posToAttack[0] == GAME_WON) {
             sendWinMessage();
+            BSConfigFile.updateScoreConfiguration(yourCurrentScore+"");
         } else {
             checkForPlayerHit(posToAttack);
         }
