@@ -25,7 +25,6 @@ public class BSConfigFile {
         props.setProperty("Resolution_Height", "500");
         props.setProperty("Color", "BLUE");
         props.setProperty("Score","0");
-
         Path propertyFile = Paths.get("config.properties");
 
         try {
@@ -76,6 +75,7 @@ public class BSConfigFile {
             default -> Color.BLUE;
         };
     }
+
     public static void updateConfiguration(String newName,String setColor, String resolutionWidth, String resolutionHeight){
         BSConfigFile.modifyFile("Name", newName);
         BSConfigFile.modifyFile("Color", setColor);
@@ -86,4 +86,9 @@ public class BSConfigFile {
     public static void updateScoreConfiguration(String newScore){
         BSConfigFile.modifyFile("Score", newScore);
     }
+
+    public static int getPreviousScore() {
+        return Integer.parseInt(readProperties("Score"));
+    }
+
 }
