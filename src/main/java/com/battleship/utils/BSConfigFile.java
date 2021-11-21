@@ -19,12 +19,12 @@ public class BSConfigFile {
     public static void newFile() {
 
         Properties props = new Properties();
-
         props.setProperty("Name", "UserName");
         props.setProperty("Avatar_Path", "src/resources/anonymous.png");
         props.setProperty("Resolution_Width", "1000");
         props.setProperty("Resolution_Height", "500");
         props.setProperty("Color", "BLUE");
+        props.setProperty("Score","0");
 
         Path propertyFile = Paths.get("config.properties");
 
@@ -81,5 +81,9 @@ public class BSConfigFile {
         BSConfigFile.modifyFile("Color", setColor);
         BSConfigFile.modifyFile("Resolution_Width", resolutionWidth);
         BSConfigFile.modifyFile("Resolution_Height", resolutionHeight);
+    }
+
+    public static void updateScoreConfiguration(String newScore){
+        BSConfigFile.modifyFile("Score", newScore);
     }
 }

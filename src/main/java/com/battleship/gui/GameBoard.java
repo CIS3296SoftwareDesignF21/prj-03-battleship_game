@@ -7,6 +7,7 @@ import com.battleship.networking.Client;
 import com.battleship.networking.NetworkConnection;
 import com.battleship.networking.Server;
 import com.battleship.game.powerup.PowerUp;
+import com.battleship.utils.BSConfigFile;
 import com.battleship.utils.SoundEffects;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
@@ -380,12 +381,12 @@ public class GameBoard {
     private void checkForWinAndSendData(int[] posToAttack) {
         try {
             if (hasPlayerWin()) {
-                connection.send(new int[] {GAME_WON, posToAttack[1], posToAttack[2], 0});
+                connection.send(new int[]{GAME_WON, posToAttack[1], posToAttack[2], 0});
                 JOptionPane.showMessageDialog(frame, "You lost!", "Bad news", JOptionPane.INFORMATION_MESSAGE);
                 replayGameButton.setEnabled(true);
                 replayGameButton.setVisible(true);
             } else {
-                connection.send(new int[] {SHIP_HIT, posToAttack[1], posToAttack[2], posToAttack[3]});
+                connection.send(new int[]{SHIP_HIT, posToAttack[1], posToAttack[2], posToAttack[3]});
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -540,7 +541,10 @@ public class GameBoard {
                 resultName = currentFont.getName();
             }
         }
-        return new Font(resultName, style >= 0 ? style : currentFont.getStyle(), size >= 0 ? size : currentFont.getSize());
+        Font font = new Font(resultName, style >= 0 ? style : currentFont.getStyle(), size >= 0 ? size : currentFont.getSize());
+        boolean isMac = System.getProperty("os.name", "").toLowerCase(Locale.ENGLISH).startsWith("mac");
+        Font fontWithFallback = isMac ? new Font(font.getFamily(), font.getStyle(), font.getSize()) : new StyleContext().getFont(font.getFamily(), font.getStyle(), font.getSize());
+        return fontWithFallback instanceof FontUIResource ? fontWithFallback : new FontUIResource(fontWithFallback);
     }
 
     /**
@@ -609,7 +613,7 @@ public class GameBoard {
                         System.out.println("Chosen position to attack: " + i + ", " + j);
                         enemyPositions[i][j].setBackground(Color.ORANGE);
                         try {
-                            connection.send(new int[] {PLAYING, i, j, powerUpVal});
+                            connection.send(new int[]{PLAYING, i, j, powerUpVal});
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
