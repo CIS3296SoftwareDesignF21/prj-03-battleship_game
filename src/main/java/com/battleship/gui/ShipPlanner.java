@@ -157,7 +157,7 @@ public class ShipPlanner implements ActionListener {
                         }
                         //checking for Vertical placement
                         else if (positions[randomRow][randomColumn].isEnabled() && positions[yVal][randomColumn].isEnabled()) {
-                            board.addShip(new Ship(randomRow, randomColumn, randomRow, randomRow + shipLength), dummyStringForBoard);
+                            board.addShip(new Ship(randomRow, randomColumn, randomRow + shipLength, randomColumn), dummyStringForBoard);
                             for (int l = randomRow; l < randomRow + shipLength; l++) {
                                 disableSurrounding(l, randomColumn);
                                 if (isMac) positions[l][randomColumn].setOpaque(true);
