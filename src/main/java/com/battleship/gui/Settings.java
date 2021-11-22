@@ -28,7 +28,7 @@ public class Settings implements ActionListener {
 
 
     private JComboBox<String> bSetColors;
-    final String[] colorsPalette = new String[] {"BLUE", "MAGENTA", "RED", "ORANGE", "BLACK", "GREEN"};
+    final String[] colorsPalette = new String[]{"BLUE", "MAGENTA", "RED", "ORANGE", "BLACK", "GREEN"};
 
     public Settings() {
         $$$setupUI$$$();
@@ -68,7 +68,6 @@ public class Settings implements ActionListener {
             String resolutionWidth = tfWidth.getText();
             String resolutionHeight = tfHeight.getText();
             BSConfigFile.updateConfiguration(newName, setColor, resolutionWidth, resolutionHeight);
-
             frame.dispose();
         }
     }
