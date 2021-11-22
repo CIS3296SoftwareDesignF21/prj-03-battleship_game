@@ -105,6 +105,9 @@ like BATTLESHIP - Multiplayer Game, which is $4.99, our game is completely free 
 ## Week 3 Tasks
 [Click Here](https://github.com/CIS3296SoftwareDesignF21/prj-03-battleship_game/blob/main/Week3.md)
 
+## Week 4 Tasks
+[Click Here](https://github.com/CIS3296SoftwareDesignF21/prj-03-battleship_game/blob/main/Week4.md)
+
 ## UMLs Diagram
 [Click Here](https://github.com/CIS3296SoftwareDesignF21/prj-03-battleship_game/blob/main/UMLsDiagram.md)
 
