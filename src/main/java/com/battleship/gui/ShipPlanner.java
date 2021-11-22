@@ -57,6 +57,7 @@ public class ShipPlanner implements ActionListener {
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
+        board.field.clear();
         this.isMac = System.getProperty("os.name", "").toLowerCase(Locale.ENGLISH).startsWith("mac");
         this.isServer = isServer;
         this.port = port;
