@@ -45,4 +45,20 @@ public class SoundEffects {
         }
     }
 
+    public static void playWinning(GameBoard gb) {
+        try {
+            playEffect(AudioSystem.getAudioInputStream(gb.getClass().getResource("/winning.wav")));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void playLosing(GameBoard gb) {
+        try {
+            playEffect(AudioSystem.getAudioInputStream(gb.getClass().getResource("/losing.wav")));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
 }
