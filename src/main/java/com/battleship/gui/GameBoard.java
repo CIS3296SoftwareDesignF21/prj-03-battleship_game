@@ -59,6 +59,7 @@ public class GameBoard {
     private int yourCurrentScore = 0;
     private int enemyCurrentScore = 0;
     private boolean isUserDataSet = false;
+    private boolean isReplay = false;
     private boolean isServer;
     private boolean isUserTurn = Player.isHost();
 
@@ -281,11 +282,12 @@ public class GameBoard {
     private void checkInputFromPlayer(String data) {
         // check if we got replay message
         if (data.equals("replay")) {
+            isReplay = true;
             messages.append(enemyName + " would like to play again!\n");
             messages.append("Type 'yes' to replay match, 'no' to quit\n");
         }
         // check if we got the ack message
-        else if (data.equals(enemyName + ": yes") || data.equals(enemyName + ": no")) {
+        else if (isReplay && (data.equals(enemyName + ": yes") || data.equals(enemyName + ": no"))) {
             handleReplay(data);
         }
         // got a chat message
@@ -344,6 +346,7 @@ public class GameBoard {
             setTurnLabel();
             SoundEffects.playBoom(this);
         } else if (posToAttack[0] == GAME_WON) {
+            isReplay = true;
             sendWinMessage();
             changePreviousScore();
         } else {
@@ -589,7 +592,7 @@ public class GameBoard {
                 try {
                     // send the message to the other player
                     connection.send(message);
-                    if (message.equals(Player.getName() + ": yes")) {
+                    if (isReplay && message.equals(Player.getName() + ": yes")) {
                         // this is the ack message back to the other player for the replay
                         // we should add another variable to make sure this is only being triggered
                         // when the replay game button has been clicked
