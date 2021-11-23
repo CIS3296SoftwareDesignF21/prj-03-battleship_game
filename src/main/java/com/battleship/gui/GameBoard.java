@@ -609,6 +609,7 @@ public class GameBoard {
                 try {
                     // the user clicked the replay button
                     // ask the other user if they want to play again
+                    isReplay = true;
                     connection.send("replay");
                 } catch (Exception ex) {
                     messages.append("Failed to send replay\n");
