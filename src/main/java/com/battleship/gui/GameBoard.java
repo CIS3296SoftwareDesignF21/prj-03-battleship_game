@@ -63,6 +63,10 @@ public class GameBoard {
     private boolean isServer;
     private boolean isUserTurn = Player.isHost();
 
+    /**
+     *  GameBoard Constructor
+     *  This is the main GUI window for the game
+     */
     public GameBoard(int port, String ip, boolean isServer) {
         frame = new JFrame("Battleship Game");
         $$$setupUI$$$();
@@ -115,10 +119,16 @@ public class GameBoard {
         }
     }
 
+    /**
+     *  Set the previous score that is stored in the config file
+     */
     private void setUpPreviousScore() {
         yourPreviousScore.setText("Previous Score: " + BSConfigFile.readProperties("Score"));
     }
 
+    /**
+     *  Check if the user has a new high score and update it if they do
+     */
     private void changePreviousScore() {
         int previousHighest = Integer.parseInt(BSConfigFile.readProperties("Score"));
         if (yourCurrentScore >= previousHighest) {
@@ -183,6 +193,9 @@ public class GameBoard {
         whosTurnLabel.setForeground(isUserTurn ? Color.GREEN : Color.RED);
     }
 
+    /**
+     *  Set the score of the current game
+     */
     private void setScoreLabel() {
         yourScore.setText("Your Score: " + yourCurrentScore);
         enemyScore.setText("Enemy Score: " + enemyCurrentScore);
@@ -201,24 +214,36 @@ public class GameBoard {
         }
     }
 
+    /**
+     *  This is called if the player is the host (really a TCP server)
+     *  It will block, for 5 minutes, and wait for another player (client) to join the game
+     */
     private void waitForClientConnection() {
-        // wait for the client to connect
-        // should display a window or something similar
-        // to show that we're waiting
-        JOptionPane optionPane = new JOptionPane();
         JLabel label = new JLabel("Waiting for client to connect");
         label.setHorizontalAlignment(JLabel.CENTER);
+        long startTime = System.currentTimeMillis();
         while (true) {
-            JOptionPane.showMessageDialog(null, label, "Please wait...", JOptionPane.PLAIN_MESSAGE);
             boolean val;
+            JOptionPane.showMessageDialog(null, label, "Please wait...", JOptionPane.PLAIN_MESSAGE);
             connection.lock.lock();
             try {
                 val = connection.clientConnected;
                 connection.lock.unlock();
                 // once this bool turns true, a client has connected
                 if (val) {
-                    JLabel label2 = new JLabel("Waiting for client to connect");
+                    JLabel label2 = new JLabel("Client Connected");
                     JOptionPane.showMessageDialog(null, label2, "Connection success!", JOptionPane.PLAIN_MESSAGE);
+                    return;
+                }
+                // this is only getting called when the above code is done
+                // maybe but in another thread?
+                long endTimeSeconds = (System.currentTimeMillis() - startTime) / 1000;
+                System.out.println("Elapsed waiting time " + endTimeSeconds);
+                // 5 min wait
+                if (endTimeSeconds >= 300) {
+                    JLabel label2 = new JLabel("Error");
+                    JOptionPane.showMessageDialog(null, label2, "Timeout - No client ever connected!", JOptionPane.PLAIN_MESSAGE);
+                    frame.dispose();
                     return;
                 }
             } catch (Exception e) {
@@ -375,6 +400,7 @@ public class GameBoard {
      * This player won, show the winning message
      */
     private void sendWinMessage() {
+        SoundEffects.playWinning(this);
         JOptionPane.showMessageDialog(frame, "You won!", "Congratulations", JOptionPane.INFORMATION_MESSAGE);
         replayGameButton.setEnabled(true);
         replayGameButton.setVisible(true);
@@ -399,6 +425,7 @@ public class GameBoard {
         try {
             if (hasPlayerWin()) {
                 connection.send(new int[]{GAME_WON, posToAttack[1], posToAttack[2], 0});
+                SoundEffects.playLosing(this);
                 JOptionPane.showMessageDialog(frame, "You lost!", "Bad news", JOptionPane.INFORMATION_MESSAGE);
                 changePreviousScore();
                 replayGameButton.setEnabled(true);
@@ -449,7 +476,7 @@ public class GameBoard {
     }
 
     /**
-     * Loop through all the positions on the player's board
+     * Loop through all the positions on the enemy's board
      * and see if any are still enabled
      * <p>
      * If there are still positions enabled, the game is not done
@@ -585,41 +612,57 @@ public class GameBoard {
         public void actionPerformed(ActionEvent e) {
             Object source = e.getSource();
             if (source == input) {
-                String message = Player.getName() + ": ";
-                message += input.getText();
-                input.setText("");
-                messages.append(message + "\n");
-                try {
-                    // send the message to the other player
-                    connection.send(message);
-                    if (isReplay && message.equals(Player.getName() + ": yes")) {
-                        // this is the ack message back to the other player for the replay
-                        // we should add another variable to make sure this is only being triggered
-                        // when the replay game button has been clicked
-                        connection.closeConnection();
-                        replayGameWait();   // check if this player needs to wait for host
-                        SwingUtilities.invokeLater(() -> new ShipPlanner(isServer, port, ip));
-                        frame.dispose();
-                    }
-                } catch (Exception ex) {
-                    messages.append("Failed to send\n");
-                    ex.printStackTrace();
-                }
-            } else if (source == replayGameButton) {
-                try {
-                    // the user clicked the replay button
-                    // ask the other user if they want to play again
-                    isReplay = true;
-                    connection.send("replay");
-                } catch (Exception ex) {
-                    messages.append("Failed to send replay\n");
-                    ex.printStackTrace();
-                }
-            } else {
+                handleChatArea();
+            }
+            else if (source == replayGameButton) {
+                handleReplayInput();
+            }
+            else {
                 // send the data to the other player whenever a user clicks a square
                 if (isUserTurn) {
                     sendDataToPlayer(source);
                 }
+            }
+        }
+
+        /**
+         * Handle the input area for chat messages
+         */
+        private void handleChatArea() {
+            String message = Player.getName() + ": ";
+            message += input.getText();
+            input.setText("");
+            messages.append(message + "\n");
+            try {
+                // send the message to the other player
+                connection.send(message);
+                if (isReplay && message.equals(Player.getName() + ": yes")) {
+                    // this is the ack message from the other player for the replay
+                    connection.closeConnection();
+                    replayGameWait();   // check if this player needs to wait for host
+                    SwingUtilities.invokeLater(() -> new ShipPlanner(isServer, port, ip));
+                    frame.dispose();
+                }
+            } catch (Exception ex) {
+                messages.append("Failed to send\n");
+                ex.printStackTrace();
+            }
+        }
+
+        /**
+         *  Send the replay request to the other player
+         *  This will set the isReplay flag so when the ack message
+         *  comes back, we know to restart the game
+         */
+        private void handleReplayInput() {
+            try {
+                // the user clicked the replay button
+                // ask the other user if they want to play again
+                isReplay = true;
+                connection.send("replay");
+            } catch (Exception ex) {
+                messages.append("Failed to send replay\n");
+                ex.printStackTrace();
             }
         }
 
