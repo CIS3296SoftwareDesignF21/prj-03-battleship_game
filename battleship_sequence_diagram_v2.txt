@@ -1,5 +1,7 @@
 title BattleShip Sequence Diagram 
 
+actor Player
+
 participant Application
 participant Window
 participant ClientDialog
@@ -11,8 +13,11 @@ participant NetworkConnection
 
 entryspacing 0.9
 
-Application->Window:BattleShip Entry Point\ninvokeLater(Window::new)
+
+Player->Application:Running jar file\nor running from IDE
+activate Player
 activate Application
+Application->Window:BattleShip Entry Point\ninvokeLater(Window::new)
 activate Window
 Window->ClientDialog:User clicked Join Game button\ninvokeLater(ClientDialog::new)
 activate ClientDialog
@@ -32,6 +37,7 @@ end
 GameBoard->GameBoard: replay()
 GameBoard-->ShipPlanner: replay() is true
 
+deactivate Player
 deactivate NetworkConnection
 deactivate GameBoard
 deactivate GameBoard
@@ -41,4 +47,3 @@ deactivate ClientDialog
 deactivate ServerDialog
 deactivate ShipPlanner
 
-==The Application class is the entry point of the BattleShip Game.\nThe main method in this class will use Java SwingUtilities\nto invoke a new Window class which uses the GUI.\n\nThe window class uses a GUI to display four buttons, which\nare host game, join game, settings, and exit. This sequence\ndiagram illustrates the more commonly used features, like\nhosting and joining a game. If a player clicks host game,\nthey will be prompted with a new ServerDialog GUI class.\nIf the player clicks join game, they will be prompted with the\nClientDialog class which allows the player to enter an IP\naddress and a port number to connect to and play the game.\n\nOnce a player has chosen whether they want to host or join\na game, they will be prompted with the ShipPlanner GUI class.\nThis GUI class allows the player to place their ships on the \nboard which they will use for the game. Players have the option\nof setting vertical ships, horizontal ships, or random placement\nof ships. Once all the ships have been placed, the user can \nclick ok to start playing the game.\n\nThe main GUI class, GameBoard is where the actual BattleShip\ngame is played. There is a seperate thread, NetworkConnection,\nthat is created and used for communication between the server\nand the client. A callback method in the GameBoard is binded\nto the thread in NetworkConnection, and everytime data is \nreceived this callback method is exectued. There are also chat\nmessages that can be sent and they are handled by the same \nnetwork thread and callback method. Once the game is over, the\nplayers have the option of playing again, and in this case, the \nprogram will just call ShipPlanner to plan a new board and use \nthe same network parameters for the TCP connection.     ==#lightgreen
