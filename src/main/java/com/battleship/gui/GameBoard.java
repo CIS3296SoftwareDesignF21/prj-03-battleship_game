@@ -372,7 +372,7 @@ public class GameBoard {
             SoundEffects.playBoom(this);
         } else if (posToAttack[0] == GAME_WON) {
             isReplay = true;
-            sendWinMessage();
+            showWinMessage(posToAttack);
             changePreviousScore();
         } else {
             checkForPlayerHit(posToAttack);
@@ -399,7 +399,11 @@ public class GameBoard {
     /**
      * This player won, show the winning message
      */
-    private void sendWinMessage() {
+    private void showWinMessage(int[] posToAttack) {
+        enemyPositions[posToAttack[1]][posToAttack[2]].setBackground(Color.RED);
+        if (posToAttack[3] != 0) {
+            PowerUp.handlePowerUp(enemyPositions, posToAttack, Color.RED);
+        }
         SoundEffects.playWinning(this);
         JOptionPane.showMessageDialog(frame, "You won!", "Congratulations", JOptionPane.INFORMATION_MESSAGE);
         replayGameButton.setEnabled(true);
@@ -424,7 +428,11 @@ public class GameBoard {
     private void checkForWinAndSendData(int[] posToAttack) {
         try {
             if (hasPlayerWin()) {
-                connection.send(new int[]{GAME_WON, posToAttack[1], posToAttack[2], 0});
+                playerPositions[posToAttack[1]][posToAttack[2]].setBackground(Color.black);
+                if (posToAttack[3] != 0) {
+                    PowerUp.handlePowerUp(playerPositions, posToAttack, Color.black);
+                }
+                connection.send(new int[]{GAME_WON, posToAttack[1], posToAttack[2], posToAttack[3]});
                 SoundEffects.playLosing(this);
                 JOptionPane.showMessageDialog(frame, "You lost!", "Bad news", JOptionPane.INFORMATION_MESSAGE);
                 changePreviousScore();
