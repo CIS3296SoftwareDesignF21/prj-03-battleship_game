@@ -1,6 +1,7 @@
 package com.battleship.gui;
 
 import com.battleship.game.boardpack.Board;
+import com.battleship.game.colorpack.ColorPack;
 import com.battleship.game.shippack.Ship;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
@@ -151,7 +152,7 @@ public class ShipPlanner implements ActionListener {
                             for (int l = randomColumn; l < randomColumn + shipLength; l++) {
                                 disableSurrounding(randomRow, l);
                                 if (isMac) positions[randomRow][l].setOpaque(true);
-                                positions[randomRow][l].setBackground(Color.BLUE);
+                                positions[randomRow][l].setBackground(ColorPack.playerTurnColor);
                                 positions[randomRow][l].setEnabled(false);
                             }
                             check = true;
@@ -162,7 +163,7 @@ public class ShipPlanner implements ActionListener {
                             for (int l = randomRow; l < randomRow + shipLength; l++) {
                                 disableSurrounding(l, randomColumn);
                                 if (isMac) positions[l][randomColumn].setOpaque(true);
-                                positions[l][randomColumn].setBackground(Color.BLUE);
+                                positions[l][randomColumn].setBackground(ColorPack.playerTurnColor);
                                 positions[l][randomColumn].setEnabled(false);
                             }
                             check = true;
@@ -351,7 +352,7 @@ public class ShipPlanner implements ActionListener {
             for (int l = i; l < i + shipLen; l++) {
                 disableSurrounding(l, j);
                 if (isMac == true) positions[l][j].setOpaque(true);
-                positions[l][j].setBackground(Color.BLUE);
+                positions[l][j].setBackground(ColorPack.playerTurnColor);
             }
             board.addShip(new Ship(i, j, i + shipLen, j), (String) comboBoxShipSelector.getSelectedItem());
             comboBoxShipSelector.removeItem(comboBoxShipSelector.getSelectedItem());
@@ -366,7 +367,7 @@ public class ShipPlanner implements ActionListener {
                 for (int l = j; l < j + shipLen; l++) {
                     disableSurrounding(i, l);
                     if (isMac == true) positions[i][l].setOpaque(true);
-                    positions[i][l].setBackground(Color.BLUE);
+                    positions[i][l].setBackground(ColorPack.playerTurnColor);
                 }
                 board.addShip(new Ship(i, j, i, j + shipLen), (String) comboBoxShipSelector.getSelectedItem());
                 comboBoxShipSelector.removeItem(comboBoxShipSelector.getSelectedItem());

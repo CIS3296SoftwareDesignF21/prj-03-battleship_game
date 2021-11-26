@@ -1,9 +1,9 @@
 package com.battleship.gui;
 
+import com.battleship.game.colorpack.ColorPack;
 import com.battleship.utils.BSConfigFile;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
-
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
 import java.awt.*;
@@ -25,8 +25,12 @@ public class Settings implements ActionListener {
     private JLabel labelImage;
     private JLabel labelWRes;
     private JLabel labelHRes;
-
-
+    private JComboBox cbEnemyHitColor;
+    private JLabel labelEnemyHitColor;
+    private JComboBox cbPlayerHitColor;
+    private JComboBox cbPlayerTurnColor;
+    private JLabel labelPlayerHitColor;
+    private JLabel labelPlayerTurnLabel;
     private JComboBox<String> bSetColors;
     final String[] colorsPalette = new String[]{"BLUE", "MAGENTA", "RED", "ORANGE", "BLACK", "GREEN"};
 
@@ -36,22 +40,30 @@ public class Settings implements ActionListener {
     }
 
     public void initUI() {
-
         frame = new JFrame("Settings");
-
         avatar_button.addActionListener(this);
         bExit.addActionListener(this);
         bSave.addActionListener(this);
-
         frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         frame.add(panel, BorderLayout.CENTER);
         frame.pack();
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
+        // set the combo-boxes with all colors
+        for (String key : ColorPack.getAllColors().keySet()) {
+            cbEnemyHitColor.addItem(key);
+            cbPlayerHitColor.addItem(key);
+            cbPlayerTurnColor.addItem(key);
+        }
+        // set the default values for the combobox
+        // will set to default everytime the settings window is open
+        cbEnemyHitColor.setSelectedItem("Red");
+        cbPlayerHitColor.setSelectedItem("Black");
+        cbPlayerTurnColor.setSelectedItem("Blue");
+
     }
 
     private ImageIcon loadImage(String path) {
-
         return new ImageIcon(path);
     }
 
@@ -63,18 +75,23 @@ public class Settings implements ActionListener {
         } else if (source == avatar_button) {
             SwingUtilities.invokeLater(() -> new ImageChooser(avatar_button));
         } else if (source == bSave) {
-            String newName = tfNick.getText();
-            String setColor = (String) bSetColors.getSelectedItem();
-            String resolutionWidth = tfWidth.getText();
-            String resolutionHeight = tfHeight.getText();
-            BSConfigFile.updateConfiguration(newName, setColor, resolutionWidth, resolutionHeight);
-            frame.dispose();
+            saveInfo();
         }
     }
 
+    private void saveInfo() {
+        String newName = tfNick.getText();
+        String setColor = (String) bSetColors.getSelectedItem();
+        String resolutionWidth = tfWidth.getText();
+        String resolutionHeight = tfHeight.getText();
+        ColorPack.setEnemyHitColor((String) cbEnemyHitColor.getSelectedItem());
+        ColorPack.setPlayerHitColor((String) cbPlayerHitColor.getSelectedItem());
+        ColorPack.setPlayerTurnColor((String) cbPlayerTurnColor.getSelectedItem());
+        BSConfigFile.updateConfiguration(newName, setColor, resolutionWidth, resolutionHeight);
+        frame.dispose();
+    }
 
     private void createUIComponents() {
-
         tfNick = new JTextField(BSConfigFile.readProperties("Name"));
         avatar_button = new JButton(loadImage(BSConfigFile.readProperties("Avatar_Path")));
         bSetColors = new JComboBox<>(colorsPalette);
@@ -93,7 +110,7 @@ public class Settings implements ActionListener {
     private void $$$setupUI$$$() {
         createUIComponents();
         panel = new JPanel();
-        panel.setLayout(new GridLayoutManager(6, 2, new Insets(0, 0, 0, 0), -1, -1));
+        panel.setLayout(new GridLayoutManager(9, 2, new Insets(0, 0, 0, 0), -1, -1));
         panel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10), null, TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, null, null));
         tfNick.setHorizontalAlignment(0);
         panel.add(tfNick, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
@@ -105,10 +122,10 @@ public class Settings implements ActionListener {
         panel.add(avatar_button, new GridConstraints(1, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         bExit = new JButton();
         bExit.setText("Exit");
-        panel.add(bExit, new GridConstraints(5, 0, 1, 2, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        panel.add(bExit, new GridConstraints(8, 0, 1, 2, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         bSave = new JButton();
         bSave.setText("Save");
-        panel.add(bSave, new GridConstraints(4, 0, 1, 2, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        panel.add(bSave, new GridConstraints(7, 0, 1, 2, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         labelUserName = new JLabel();
         labelUserName.setText("UserName");
         panel.add(labelUserName, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
@@ -122,6 +139,21 @@ public class Settings implements ActionListener {
         labelHRes.setHorizontalTextPosition(0);
         labelHRes.setText("Resolution Height");
         panel.add(labelHRes, new GridConstraints(3, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        cbEnemyHitColor = new JComboBox();
+        panel.add(cbEnemyHitColor, new GridConstraints(4, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        labelEnemyHitColor = new JLabel();
+        labelEnemyHitColor.setText("Enemy Hit Color");
+        panel.add(labelEnemyHitColor, new GridConstraints(4, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        cbPlayerHitColor = new JComboBox();
+        panel.add(cbPlayerHitColor, new GridConstraints(5, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        cbPlayerTurnColor = new JComboBox();
+        panel.add(cbPlayerTurnColor, new GridConstraints(6, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        labelPlayerHitColor = new JLabel();
+        labelPlayerHitColor.setText("Player Hit Color");
+        panel.add(labelPlayerHitColor, new GridConstraints(5, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        labelPlayerTurnLabel = new JLabel();
+        labelPlayerTurnLabel.setText("Player Turn Color");
+        panel.add(labelPlayerTurnLabel, new GridConstraints(6, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
     }
 
     /**

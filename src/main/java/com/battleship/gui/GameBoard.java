@@ -1,5 +1,6 @@
 package com.battleship.gui;
 
+import com.battleship.game.colorpack.ColorPack;
 import com.battleship.game.playerpack.Player;
 import com.battleship.game.playerpack.PlayerData;
 import com.battleship.game.shippack.Ship;
@@ -107,12 +108,12 @@ public class GameBoard {
             // draw the ship on the board
             if (shipToPlace.isVertical()) {
                 for (int i = 0; i < length; i++) {
-                    playerPositions[h_c[0]][h_c[1] + i].setBackground(Color.BLUE);
+                    playerPositions[h_c[0]][h_c[1] + i].setBackground(ColorPack.playerTurnColor);
                     playerPositions[h_c[0]][h_c[1] + i].setEnabled(true);
                 }
             } else {
                 for (int i = 0; i < length; i++) {
-                    playerPositions[h_c[0] + i][h_c[1]].setBackground(Color.BLUE);
+                    playerPositions[h_c[0] + i][h_c[1]].setBackground(ColorPack.playerTurnColor);
                     playerPositions[h_c[0] + i][h_c[1]].setEnabled(true);
                 }
             }
@@ -365,7 +366,7 @@ public class GameBoard {
             SoundEffects.playBoomDynamite(this);
         } else if (posToAttack[0] == SHIP_HIT) { // The enemy sends back the int array with a 1 in first position to signal that he has been hit
             yourCurrentScore++;
-            enemyPositions[posToAttack[1]][posToAttack[2]].setBackground(Color.RED);
+            enemyPositions[posToAttack[1]][posToAttack[2]].setBackground(ColorPack.enemyHitColor);
             isUserTurn = true;
             setScoreLabel();
             setTurnLabel();
@@ -400,9 +401,9 @@ public class GameBoard {
      * This player won, show the winning message
      */
     private void showWinMessage(int[] posToAttack) {
-        enemyPositions[posToAttack[1]][posToAttack[2]].setBackground(Color.RED);
+        enemyPositions[posToAttack[1]][posToAttack[2]].setBackground(ColorPack.enemyHitColor);
         if (posToAttack[3] != 0) {
-            PowerUp.handlePowerUp(enemyPositions, posToAttack, Color.RED);
+            PowerUp.handlePowerUp(enemyPositions, posToAttack, ColorPack.enemyHitColor);
         }
         SoundEffects.playWinning(this);
         JOptionPane.showMessageDialog(frame, "You won!", "Congratulations", JOptionPane.INFORMATION_MESSAGE);
@@ -415,9 +416,9 @@ public class GameBoard {
      * Will also check if the enemy had any powerups enabled
      */
     private void updatePlayerBoard(int[] posToAttack) {
-        playerPositions[posToAttack[1]][posToAttack[2]].setBackground(Color.BLACK);
+        playerPositions[posToAttack[1]][posToAttack[2]].setBackground(ColorPack.playerHitColor);
         playerPositions[posToAttack[1]][posToAttack[2]].setEnabled(false);
-        PowerUp.handlePowerUp(playerPositions, posToAttack, Color.BLACK);
+        PowerUp.handlePowerUp(playerPositions, posToAttack, ColorPack.playerHitColor);
         checkForWinAndSendData(posToAttack);
     }
 
@@ -428,9 +429,9 @@ public class GameBoard {
     private void checkForWinAndSendData(int[] posToAttack) {
         try {
             if (hasPlayerWin()) {
-                playerPositions[posToAttack[1]][posToAttack[2]].setBackground(Color.black);
+                playerPositions[posToAttack[1]][posToAttack[2]].setBackground(ColorPack.playerHitColor);
                 if (posToAttack[3] != 0) {
-                    PowerUp.handlePowerUp(playerPositions, posToAttack, Color.black);
+                    PowerUp.handlePowerUp(playerPositions, posToAttack, ColorPack.playerHitColor);
                 }
                 connection.send(new int[]{GAME_WON, posToAttack[1], posToAttack[2], posToAttack[3]});
                 SoundEffects.playLosing(this);
@@ -476,8 +477,8 @@ public class GameBoard {
     private void updateHitWithPowerUp(int[] posToAttack) {
         System.out.println("Enemy got hit at pos " + posToAttack[1] + " and " + posToAttack[2]);
         yourCurrentScore++;
-        enemyPositions[posToAttack[1]][posToAttack[2]].setBackground(Color.RED);
-        PowerUp.handlePowerUp(enemyPositions, posToAttack, Color.RED);
+        enemyPositions[posToAttack[1]][posToAttack[2]].setBackground(ColorPack.enemyHitColor);
+        PowerUp.handlePowerUp(enemyPositions, posToAttack, ColorPack.enemyHitColor);
         isUserTurn = true;
         setTurnLabel();
         setScoreLabel();
