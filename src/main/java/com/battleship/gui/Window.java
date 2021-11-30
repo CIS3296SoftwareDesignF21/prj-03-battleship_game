@@ -114,7 +114,7 @@ public class Window {
         panel.add(spacer2, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, null, null, 0, false));
         gameName = new JLabel();
         gameName.setIcon(new ImageIcon(getClass().getResource("/ship.png")));
-        gameName.setText("BattleShip game v.0.0.1");
+        gameName.setText("BattleShip game v.0.0.3");
         panel.add(gameName, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
     }
 
