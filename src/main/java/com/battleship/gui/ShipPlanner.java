@@ -198,6 +198,7 @@ public class ShipPlanner implements ActionListener {
     }
 
     private void resetPlanner() {
+        randomPlacement.setEnabled(true);
         comboBoxShipSelector.removeAllItems();
         comboBoxShipSelector.addItem("4 Unit Ship");
         comboBoxShipSelector.addItem("3 Unit Ship (1)");
@@ -319,6 +320,7 @@ public class ShipPlanner implements ActionListener {
                     // check where the user clicked and add the ship
                     if (source == positions[i][j]) {
                         setShipsOnBoard(i, j, e);
+                        randomPlacement.setEnabled(false);
                     }
                 }
             }
