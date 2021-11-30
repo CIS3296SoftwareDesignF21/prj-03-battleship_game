@@ -669,6 +669,8 @@ public class GameBoard {
                 // ask the other user if they want to play again
                 isReplay = true;
                 connection.send("replay");
+                messages.append("Just asked other player to replay\n");
+                messages.append("Please wait\n");
             } catch (Exception ex) {
                 messages.append("Failed to send replay\n");
                 ex.printStackTrace();

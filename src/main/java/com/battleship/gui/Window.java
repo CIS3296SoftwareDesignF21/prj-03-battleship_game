@@ -161,6 +161,7 @@ public class Window {
                 SwingUtilities.invokeLater(ServerDialog::new);
                 Player.setHost(true);
             } else if (source == b_start_join) {
+                Player.setHost(false);
                 SwingUtilities.invokeLater(ClientDialog::new);
             } else if (source == b_settings) {
                 SwingUtilities.invokeLater(Settings::new);
