@@ -65,8 +65,8 @@ public class GameBoard {
     private boolean isUserTurn = Player.isHost();
 
     /**
-     *  GameBoard Constructor
-     *  This is the main GUI window for the game
+     * GameBoard Constructor
+     * This is the main GUI window for the game
      */
     public GameBoard(int port, String ip, boolean isServer) {
         frame = new JFrame("Battleship Game");
@@ -121,14 +121,26 @@ public class GameBoard {
     }
 
     /**
-     *  Set the previous score that is stored in the config file
+     * Set the previous score that is stored in the config file
      */
     private void setUpPreviousScore() {
         yourPreviousScore.setText("Previous Score: " + BSConfigFile.readProperties("Score"));
     }
 
+    private void isYourScoreAlreadyZero() {
+        if (yourCurrentScore > 0) {
+            yourCurrentScore--;
+        }
+    }
+
+    private void isEnemyScoreAlreadyZero() {
+        if (enemyCurrentScore > 0) {
+            enemyCurrentScore--;
+        }
+    }
+
     /**
-     *  Check if the user has a new high score and update it if they do
+     * Check if the user has a new high score and update it if they do
      */
     private void changePreviousScore() {
         int previousHighest = Integer.parseInt(BSConfigFile.readProperties("Score"));
@@ -195,7 +207,7 @@ public class GameBoard {
     }
 
     /**
-     *  Set the score of the current game
+     * Set the score of the current game
      */
     private void setScoreLabel() {
         yourScore.setText("Your Score: " + yourCurrentScore);
@@ -216,8 +228,8 @@ public class GameBoard {
     }
 
     /**
-     *  This is called if the player is the host (really a TCP server)
-     *  It will block, for 5 minutes, and wait for another player (client) to join the game
+     * This is called if the player is the host (really a TCP server)
+     * It will block, for 5 minutes, and wait for another player (client) to join the game
      */
     private void waitForClientConnection() {
         JLabel label = new JLabel("Waiting for client to connect");
@@ -366,6 +378,7 @@ public class GameBoard {
             SoundEffects.playBoomDynamite(this);
         } else if (posToAttack[0] == SHIP_HIT) { // The enemy sends back the int array with a 1 in first position to signal that he has been hit
             yourCurrentScore++;
+            isEnemyScoreAlreadyZero();
             enemyPositions[posToAttack[1]][posToAttack[2]].setBackground(ColorPack.enemyHitColor);
             isUserTurn = true;
             setScoreLabel();
@@ -388,6 +401,7 @@ public class GameBoard {
         // check if this player got hit
         if (playerPositions[posToAttack[1]][posToAttack[2]].isEnabled()) {
             enemyCurrentScore++;
+            isYourScoreAlreadyZero();
             updatePlayerBoard(posToAttack);
             setScoreLabel();
         } else {
@@ -477,6 +491,7 @@ public class GameBoard {
     private void updateHitWithPowerUp(int[] posToAttack) {
         System.out.println("Enemy got hit at pos " + posToAttack[1] + " and " + posToAttack[2]);
         yourCurrentScore++;
+        isEnemyScoreAlreadyZero();
         enemyPositions[posToAttack[1]][posToAttack[2]].setBackground(ColorPack.enemyHitColor);
         PowerUp.handlePowerUp(enemyPositions, posToAttack, ColorPack.enemyHitColor);
         isUserTurn = true;
@@ -622,11 +637,9 @@ public class GameBoard {
             Object source = e.getSource();
             if (source == input) {
                 handleChatArea();
-            }
-            else if (source == replayGameButton) {
+            } else if (source == replayGameButton) {
                 handleReplayInput();
-            }
-            else {
+            } else {
                 // send the data to the other player whenever a user clicks a square
                 if (isUserTurn) {
                     sendDataToPlayer(source);
@@ -659,9 +672,9 @@ public class GameBoard {
         }
 
         /**
-         *  Send the replay request to the other player
-         *  This will set the isReplay flag so when the ack message
-         *  comes back, we know to restart the game
+         * Send the replay request to the other player
+         * This will set the isReplay flag so when the ack message
+         * comes back, we know to restart the game
          */
         private void handleReplayInput() {
             try {
