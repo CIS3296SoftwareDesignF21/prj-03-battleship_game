@@ -81,6 +81,9 @@ public class Settings implements ActionListener {
 
     private void saveInfo() {
         String newName = tfNick.getText();
+        if (newName.length() == 0) {
+            newName = "NewName";
+        }
         String setColor = (String) bSetColors.getSelectedItem();
         String resolutionWidth = tfWidth.getText();
         String resolutionHeight = tfHeight.getText();

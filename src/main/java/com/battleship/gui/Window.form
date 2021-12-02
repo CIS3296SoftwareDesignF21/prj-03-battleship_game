@@ -67,7 +67,7 @@
         </constraints>
         <properties>
           <icon value="ship.png"/>
-          <text value="BattleShip game v.0.0.1"/>
+          <text value="BattleShip game v.0.0.3"/>
         </properties>
       </component>
     </children>
