@@ -671,6 +671,10 @@ public class GameBoard {
                     SwingUtilities.invokeLater(() -> new ShipPlanner(isServer, port, ip));
                     frame.dispose();
                 }
+                else if (isReplay && message.equals(Player.getName() + ": no")) {
+                    // this player does not want to play again, so exit this windows
+                    frame.dispose();
+                }
             } catch (Exception ex) {
                 messages.append("Failed to send\n");
                 ex.printStackTrace();
