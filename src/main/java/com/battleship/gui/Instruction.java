@@ -15,9 +15,9 @@ public class Instruction {
         JFrame frame = new JFrame("How to Play");
         JPanel panel = new JPanel();
         JLabel label = new JLabel("<html>" + "Two players get connected through open port over internet or locally hosted port, a board is generated x by y square where players are given a set number of ships of random length. Placement of ships in any part inside the given board of their choice. Once both sides are ready, whoever is lucky to get the direct shot is able to make another hit, if the player misses, the next turn is their opponent. A hit or misses on the opponent board will mark the square, making it unavailable to be hit again. With that, the game ended when one of the players no longer had any ship alive." + "</html>\"");
-        panel.setBorder(BorderFactory.createEmptyBorder(50, 50, 50, 50));
+        panel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
         panel.setLayout(new GridLayout());
-        frame.setSize(500, 500);
+        frame.setSize(300, 500);
 
         frame.add(panel, BorderLayout.CENTER);
         frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
