@@ -19,7 +19,6 @@ import javax.swing.text.StyleContext;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.Calendar;
 import java.util.Locale;
 
 
@@ -61,6 +60,7 @@ public class GameBoard {
     private int enemyCurrentScore = 0;
     private boolean isUserDataSet = false;
     private boolean isReplay = false;
+    private boolean isConnected;
     private boolean isServer;
     private boolean isUserTurn = Player.isHost();
 
@@ -79,14 +79,15 @@ public class GameBoard {
         powerUpButtonGroup.add(btnPowerUpLineVert);
         powerUpButtonGroup.add(btnPowerUpLineHorizontal);
         powerUpButtonGroup.add(btnPowerUpMaxHitDamage);
+        this.isConnected = isServer ? false : true;
+        this.ip = ip;
+        this.port = port;
+        this.isServer = isServer;
         this.setPlayerButtons();
         this.setShipOnBoard();
         this.setEnemyButtons();
         this.setUserElements();
         this.setTurnLabel();
-        this.ip = ip;
-        this.port = port;
-        this.isServer = isServer;
         frame.add(mainPanel, BorderLayout.CENTER);
         frame.setSize(1000, 800); //TODO: set a good size for the game.
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -220,48 +221,10 @@ public class GameBoard {
     public void createServer() {
         connection = new Server(data -> SwingUtilities.invokeLater(() -> handleData(data)), port);
         try {
+            messages.append("***Waiting for opponent to connect***\n");
             connection.startConnection();
-            waitForClientConnection();
         } catch (Exception e) {
             e.printStackTrace();
-        }
-    }
-
-    /**
-     * This is called if the player is the host (really a TCP server)
-     * It will block, for 5 minutes, and wait for another player (client) to join the game
-     */
-    private void waitForClientConnection() {
-        JLabel label = new JLabel("Waiting for client to connect");
-        label.setHorizontalAlignment(JLabel.CENTER);
-        long startTime = System.currentTimeMillis();
-        while (true) {
-            boolean val;
-            JOptionPane.showMessageDialog(null, label, "Please wait...", JOptionPane.PLAIN_MESSAGE);
-            connection.lock.lock();
-            try {
-                val = connection.clientConnected;
-                connection.lock.unlock();
-                // once this bool turns true, a client has connected
-                if (val) {
-                    JLabel label2 = new JLabel("Client Connected");
-                    JOptionPane.showMessageDialog(null, label2, "Connection success!", JOptionPane.PLAIN_MESSAGE);
-                    return;
-                }
-                // this is only getting called when the above code is done
-                // maybe but in another thread?
-                long endTimeSeconds = (System.currentTimeMillis() - startTime) / 1000;
-                System.out.println("Elapsed waiting time " + endTimeSeconds);
-                // 5 min wait
-                if (endTimeSeconds >= 300) {
-                    JLabel label2 = new JLabel("Error");
-                    JOptionPane.showMessageDialog(null, label2, "Timeout - No client ever connected!", JOptionPane.PLAIN_MESSAGE);
-                    frame.dispose();
-                    return;
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
         }
     }
 
@@ -308,6 +271,10 @@ public class GameBoard {
         } else if (data instanceof PlayerData) {
             // got the player data
             setPlayerData(data);
+        } else if (data instanceof Boolean) {
+            // the client has connected to the server
+            isConnected = true;
+            messages.append("\n***Opponent connected***\nPlay now!!\n\n");
         } else {
             // got game data
             handleGameData((int[]) data);
@@ -613,10 +580,7 @@ public class GameBoard {
                 resultName = currentFont.getName();
             }
         }
-        Font font = new Font(resultName, style >= 0 ? style : currentFont.getStyle(), size >= 0 ? size : currentFont.getSize());
-        boolean isMac = System.getProperty("os.name", "").toLowerCase(Locale.ENGLISH).startsWith("mac");
-        Font fontWithFallback = isMac ? new Font(font.getFamily(), font.getStyle(), font.getSize()) : new StyleContext().getFont(font.getFamily(), font.getStyle(), font.getSize());
-        return fontWithFallback instanceof FontUIResource ? fontWithFallback : new FontUIResource(fontWithFallback);
+        return new Font(resultName, style >= 0 ? style : currentFont.getStyle(), size >= 0 ? size : currentFont.getSize());
     }
 
     /**
@@ -635,14 +599,18 @@ public class GameBoard {
         @Override
         public void actionPerformed(ActionEvent e) {
             Object source = e.getSource();
-            if (source == input) {
-                handleChatArea();
-            } else if (source == replayGameButton) {
-                handleReplayInput();
+            if (!isConnected) {
+                messages.append("\nPlease wait - Opponent has not connected\n");
             } else {
-                // send the data to the other player whenever a user clicks a square
-                if (isUserTurn) {
-                    sendDataToPlayer(source);
+                if (source == input) {
+                    handleChatArea();
+                } else if (isConnected && source == replayGameButton) {
+                    handleReplayInput();
+                } else {
+                    // send the data to the other player whenever a user clicks a square
+                    if (isUserTurn) {
+                        sendDataToPlayer(source);
+                    }
                 }
             }
         }
@@ -664,8 +632,7 @@ public class GameBoard {
                     replayGameWait();   // check if this player needs to wait for host
                     SwingUtilities.invokeLater(() -> new ShipPlanner(isServer, port, ip));
                     frame.dispose();
-                }
-                else if (isReplay && message.equals(Player.getName() + ": no")) {
+                } else if (isReplay && message.equals(Player.getName() + ": no")) {
                     // this player does not want to play again, so exit this windows
                     frame.dispose();
                 }

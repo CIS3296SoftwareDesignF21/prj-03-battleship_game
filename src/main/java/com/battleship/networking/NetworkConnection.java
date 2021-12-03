@@ -89,9 +89,7 @@ public abstract class NetworkConnection {
                 // wait for the client to connect
                 System.out.println("Waiting for Client to Connect....");
                 socket = server.accept();
-                lock.lock();
-                clientConnected = true;
-                lock.unlock();
+                onReceiveCallback.accept(new Boolean(true));
             }
             else {
                 socket = new Socket(getIP(), getPort());
