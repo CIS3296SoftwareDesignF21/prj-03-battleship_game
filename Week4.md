@@ -9,3 +9,6 @@
 - Disabled surrondings for auto-gen
 - Helped Dat with final bug fixes
 - Cleaned up readme per the lab requirements 
+
+## Dat Nguyen
+- Added penalty to scoring
