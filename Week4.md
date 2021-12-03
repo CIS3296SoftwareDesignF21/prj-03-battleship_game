@@ -11,3 +11,4 @@
 
 ## Dat Nguyen
 - Added penalty to scoring
+- Update board to reflect when opponent missed their shot
