@@ -16,3 +16,7 @@
 ## John Crane
 - Reworked the way the host waits for the client once the hosts the game 
 - Colorized ships during gameplay for Mac users
+
+## Juan-Carlo Mercado
+- Debugged the random placement button to ensure there is no ships being placed on top of eachother
+- Assisted John Crane, to know where the possible bugs for mac can be for the color and ship pieces 
