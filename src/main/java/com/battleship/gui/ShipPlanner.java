@@ -92,8 +92,7 @@ public class ShipPlanner implements ActionListener {
         Object source = e.getSource();
         if (source == buttonOk) {
             prepareGameBoard();
-        }
-        else if (source == buttonReset) {
+        } else if (source == buttonReset) {
             board.field.clear(); // resets hashmap
             resetPlanner();
             randomPlacement.setEnabled(true);
@@ -180,7 +179,7 @@ public class ShipPlanner implements ActionListener {
     }
 
     /**
-     *  Disable surrounding squares when a player sets a ship
+     * Disable surrounding squares when a player sets a ship
      */
     private void disableSurrounding(int x, int y) {
         for (int i = x - 1; i <= x + 1; i++) {
@@ -291,10 +290,7 @@ public class ShipPlanner implements ActionListener {
                 resultName = currentFont.getName();
             }
         }
-        Font font = new Font(resultName, style >= 0 ? style : currentFont.getStyle(), size >= 0 ? size : currentFont.getSize());
-        boolean isMac = System.getProperty("os.name", "").toLowerCase(Locale.ENGLISH).startsWith("mac");
-        Font fontWithFallback = isMac ? new Font(font.getFamily(), font.getStyle(), font.getSize()) : new StyleContext().getFont(font.getFamily(), font.getStyle(), font.getSize());
-        return fontWithFallback instanceof FontUIResource ? fontWithFallback : new FontUIResource(fontWithFallback);
+        return new Font(resultName, style >= 0 ? style : currentFont.getStyle(), size >= 0 ? size : currentFont.getSize());
     }
 
     /**
@@ -307,8 +303,8 @@ public class ShipPlanner implements ActionListener {
     private class ButtonHandler implements MouseListener {
 
         /**
-         *  EventHandler that will be called everytime a user
-         *  clicks the mouse
+         * EventHandler that will be called everytime a user
+         * clicks the mouse
          */
         @Override
         public void mouseClicked(MouseEvent e) {
@@ -327,8 +323,8 @@ public class ShipPlanner implements ActionListener {
         }
 
         /**
-         *  The user clicked a grid
-         *  Figure out which ship to place on the board
+         * The user clicked a grid
+         * Figure out which ship to place on the board
          */
         private void setShipsOnBoard(int i, int j, MouseEvent e) {
             int comboBoxItemCount = comboBoxShipSelector.getItemCount();
@@ -347,8 +343,8 @@ public class ShipPlanner implements ActionListener {
         }
 
         /**
-         *  The user left-clicked the mouse on a grid
-         *  Set a vertical ship
+         * The user left-clicked the mouse on a grid
+         * Set a vertical ship
          */
         private void setVerticalShip(int i, int j, int shipLen) {
             for (int l = i; l < i + shipLen; l++) {
@@ -361,8 +357,8 @@ public class ShipPlanner implements ActionListener {
         }
 
         /**
-         *  The user right-clicked the mouse on a grid
-         *  Set a horizontal ship
+         * The user right-clicked the mouse on a grid
+         * Set a horizontal ship
          */
         private void setHorizontalShip(int i, int j, int shipLen) {
             if (j + shipLen <= 10 && isValidPosition(i, j, i, j + shipLen - 1)) {
