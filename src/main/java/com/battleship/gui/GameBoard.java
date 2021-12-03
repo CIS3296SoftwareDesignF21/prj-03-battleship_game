@@ -406,6 +406,7 @@ public class GameBoard {
             setScoreLabel();
         } else {
             // not hit, it's this players turn now
+            updateMissedBoard(posToAttack);
             isUserTurn = true;
             setTurnLabel();
         }
@@ -434,6 +435,11 @@ public class GameBoard {
         playerPositions[posToAttack[1]][posToAttack[2]].setEnabled(false);
         PowerUp.handlePowerUp(playerPositions, posToAttack, ColorPack.playerHitColor);
         checkForWinAndSendData(posToAttack);
+    }
+
+    private void updateMissedBoard(int[] posToAttack) {
+        playerPositions[posToAttack[1]][posToAttack[2]].setBackground(Color.GRAY);
+        playerPositions[posToAttack[1]][posToAttack[2]].setEnabled(false);
     }
 
     /**
