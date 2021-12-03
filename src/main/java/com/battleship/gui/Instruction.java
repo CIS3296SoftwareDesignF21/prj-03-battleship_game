@@ -14,13 +14,7 @@ public class Instruction {
     public Instruction() {
         JFrame frame = new JFrame("How to Play");
         JPanel panel = new JPanel();
-        JLabel label = new JLabel("<html>" +
-                "English is not my native language so I am not very good at writing" +
-                "in it. So the paragraph below is auto generated using a paragraph generator." +
-                " Please treat it like an instruction.<br>" +
-                "If you're looking for random paragraphs, you've come to the right place. When a random word or a random sentence isn't quite enough, the next logical step is to find a random paragraph. We created the Random Paragraph Generator with you in mind. The process is quite simple. Choose the number of random paragraphs you'd like to see and click the button. Your chosen number of paragraphs will instantly appear." +
-                "While it may not be obvious to everyone, there are a number of reasons creating random paragraphs can be useful. A few examples of how some people use this generator are listed in the following paragraphs. It's not only writers who can benefit from this free online tool. If you're a programmer who's working on a project where blocks of text are needed, this tool can be a great way to get that. It's a good way to test your programming and that the tool being created is working well. Above are a few examples of how the random paragraph generator can be beneficial. The best way to see if this random paragraph picker will be useful for your intended purposes is to give it a try. Generate a number of paragraphs to see if they are beneficial to your current project." +
-                "</html>\"");
+        JLabel label = new JLabel("<html>" + "Two players get connected through open port over internet or locally hosted port, a board is generated x by y square where players are given a set number of ships of random length. Placement of ships in any part inside the given board of their choice. Once both sides are ready, whoever is lucky to get the direct shot is able to make another hit, if the player misses, the next turn is their opponent. A hit or misses on the opponent board will mark the square, making it unavailable to be hit again. With that, the game ended when one of the players no longer had any ship alive." + "</html>\"");
         panel.setBorder(BorderFactory.createEmptyBorder(50, 50, 50, 50));
         panel.setLayout(new GridLayout());
         frame.setSize(500, 500);
