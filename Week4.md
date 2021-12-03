@@ -12,3 +12,7 @@
 ## Dat Nguyen
 - Added penalty to scoring
 - Update board to reflect when opponent missed their shot
+
+## John Crane
+- Reworked the way the host waits for the client at once the hosts the game 
+- Colorized ships during gameplay for Mac users
