@@ -29,6 +29,7 @@ public class Window {
     private JButton b_exit;
     private JButton b_settings;
     private JLabel gameName;
+    private JButton b_instruction;
 
     private final EventHandler eventHandler = new EventHandler();
 
@@ -56,6 +57,7 @@ public class Window {
         b_start_host.addActionListener(eventHandler);
         b_start_join.addActionListener(eventHandler);
         b_settings.addActionListener(eventHandler);
+        b_instruction.addActionListener(eventHandler);
 
         frame.add(panel, BorderLayout.CENTER);
         frame.pack();
@@ -86,7 +88,7 @@ public class Window {
      */
     private void $$$setupUI$$$() {
         panel = new JPanel();
-        panel.setLayout(new GridLayoutManager(5, 3, new Insets(0, 0, 0, 0), -1, -1));
+        panel.setLayout(new GridLayoutManager(6, 3, new Insets(0, 0, 0, 0), -1, -1));
         panel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10), null, TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, this.$$$getFont$$$(null, -1, -1, panel.getFont()), null));
         b_start_host = new JButton();
         b_start_host.setIcon(new ImageIcon(getClass().getResource("/server.png")));
@@ -102,12 +104,12 @@ public class Window {
         b_settings.setIcon(new ImageIcon(getClass().getResource("/settings.png")));
         b_settings.setText("Settings");
         b_settings.setToolTipText("Open the settings");
-        panel.add(b_settings, new GridConstraints(3, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        panel.add(b_settings, new GridConstraints(4, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         b_exit = new JButton();
         b_exit.setIcon(new ImageIcon(getClass().getResource("/logout.png")));
         b_exit.setText("Exit");
         b_exit.setToolTipText("Exit the application");
-        panel.add(b_exit, new GridConstraints(4, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        panel.add(b_exit, new GridConstraints(5, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         final Spacer spacer1 = new Spacer();
         panel.add(spacer1, new GridConstraints(1, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, null, null, 0, false));
         final Spacer spacer2 = new Spacer();
@@ -116,6 +118,9 @@ public class Window {
         gameName.setIcon(new ImageIcon(getClass().getResource("/ship.png")));
         gameName.setText("BattleShip game v.0.0.1");
         panel.add(gameName, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        b_instruction = new JButton();
+        b_instruction.setText("How to Play");
+        panel.add(b_instruction, new GridConstraints(3, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
     }
 
     /**
@@ -161,6 +166,8 @@ public class Window {
                 SwingUtilities.invokeLater(ClientDialog::new);
             } else if (source == b_settings) {
                 SwingUtilities.invokeLater(Settings::new);
+            } else if (source == b_instruction) {
+                SwingUtilities.invokeLater(Instruction::new);
             }
         }
     }
