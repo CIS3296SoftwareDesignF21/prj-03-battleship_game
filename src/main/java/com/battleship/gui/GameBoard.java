@@ -63,6 +63,7 @@ public class GameBoard {
     private boolean isConnected;
     private boolean isServer;
     private boolean isUserTurn = Player.isHost();
+    private boolean isMac = false;
 
     /**
      * GameBoard Constructor
@@ -103,17 +104,20 @@ public class GameBoard {
     private void setShipOnBoard() {
         setUpPreviousScore();
         setScoreLabel();
+        isMac = checkMacOs();
         for (Ship shipToPlace : ShipPlanner.board.field.values()) {
             int[] h_c = shipToPlace.getHeadCoordinates();
             int length = shipToPlace.getLength();
             // draw the ship on the board
             if (shipToPlace.isVertical()) {
                 for (int i = 0; i < length; i++) {
+                    if (isMac) playerPositions[h_c[0]][h_c[1] + i].setOpaque(true);
                     playerPositions[h_c[0]][h_c[1] + i].setBackground(ColorPack.playerTurnColor);
                     playerPositions[h_c[0]][h_c[1] + i].setEnabled(true);
                 }
             } else {
                 for (int i = 0; i < length; i++) {
+                    if (isMac) playerPositions[h_c[0] + i][h_c[1]].setOpaque(true);
                     playerPositions[h_c[0] + i][h_c[1]].setBackground(ColorPack.playerTurnColor);
                     playerPositions[h_c[0] + i][h_c[1]].setEnabled(true);
                 }
@@ -338,6 +342,7 @@ public class GameBoard {
      * Check what game data has been sent and see if there are any hits
      */
     private void handleGameData(int[] posToAttack) {
+        isMac = checkMacOs();
         if (posToAttack[0] == SHIP_HIT && posToAttack[3] != 0) {
             // the other play got hit, so update their board
             updateHitWithPowerUp(posToAttack);
@@ -346,6 +351,7 @@ public class GameBoard {
         } else if (posToAttack[0] == SHIP_HIT) { // The enemy sends back the int array with a 1 in first position to signal that he has been hit
             yourCurrentScore++;
             isEnemyScoreAlreadyZero();
+            if (isMac) enemyPositions[posToAttack[1]][posToAttack[2]].setOpaque(true);
             enemyPositions[posToAttack[1]][posToAttack[2]].setBackground(ColorPack.enemyHitColor);
             isUserTurn = true;
             setScoreLabel();
@@ -383,6 +389,8 @@ public class GameBoard {
      * This player won, show the winning message
      */
     private void showWinMessage(int[] posToAttack) {
+        isMac = checkMacOs();
+        if (isMac) enemyPositions[posToAttack[1]][posToAttack[2]].setOpaque(true);
         enemyPositions[posToAttack[1]][posToAttack[2]].setBackground(ColorPack.enemyHitColor);
         if (posToAttack[3] != 0) {
             PowerUp.handlePowerUp(enemyPositions, posToAttack, ColorPack.enemyHitColor);
@@ -499,6 +507,14 @@ public class GameBoard {
         if (!isServer) {
             JOptionPane.showMessageDialog(frame, "Please wait for the other player to set board", "BattleShip Replay", JOptionPane.INFORMATION_MESSAGE);
         }
+    }
+
+    /**
+     * Checks if the user is using MacOS
+     * @return true if the user is using MacOS, otherwise false
+     */
+    private boolean checkMacOs() {
+        return (System.getProperty("os.name", "").toLowerCase(Locale.ENGLISH).startsWith("mac"));
     }
 
     /**
