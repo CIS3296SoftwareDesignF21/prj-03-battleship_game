@@ -8,3 +8,7 @@
 #### Dat Nguyen
 * Read over project components
 
+#### Felix Chen
+* Read over project components
+* Working on Persona
+
